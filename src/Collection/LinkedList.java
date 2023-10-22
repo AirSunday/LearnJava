@@ -11,75 +11,66 @@ public class LinkedList<T> {
         size = 0;
     }
 
-    public void Add(T item){                    //O(1) Был добавлен хвост списку для быстрого добавления
+    public void add(T item){                    //O(1) Был добавлен хвост списку для быстрого добавления
         Node<T> newNode = new Node<T>(item);    // Однако, есть потери в памяти
         if(head == null) {
             head = newNode;
         }
         else {
-            newNode.SetPrev(tail);
-            tail.SetNext(newNode);
+            newNode.setPrev(tail);
+            tail.setNext(newNode);
         }
         tail = newNode;
         size++;
     }
 
-    public void Remove(int index){                  //O(n)
+    public void remove(int index){                  //O(n)
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Недопустимый индекс");
         }
 
         if(index == 0)
-            head = head.GetNext();
+            head = head.getNext();
 
         if(index == size-1)
-            tail = tail.GetPrev();
+            tail = tail.getPrev();
 
 
         Node<T> temp = head;
         for(int i = 0; i < index; i++)      // O(n) Нет индексов для обращения к элементу на прямую
-            temp = temp.GetNext();          // необходимо пройти весь путь для удаления нужного
+            temp = temp.getNext();          // необходимо пройти весь путь для удаления нужного
 
 
-        Node<T> tempNext = temp.GetNext();
-        Node<T> tempPrev = temp.GetPrev();
-        if(tempNext != null) tempNext.SetPrev(temp.GetPrev());
-        if(tempPrev != null) tempPrev.SetNext(temp.GetNext());
+        Node<T> tempNext = temp.getNext();
+        Node<T> tempPrev = temp.getPrev();
+        if(tempNext != null) tempNext.setPrev(temp.getPrev());
+        if(tempPrev != null) tempPrev.setNext(temp.getNext());
     }
 
-    public T Get(int index){                            //O(n)
+    public T get(int index){                            //O(n)
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Недопустимый индекс");
         }
         Node<T> temp = head;
         for(int i = 0; i < index; i++)
-            temp = temp.GetNext();
+            temp = temp.getNext();
 
-        return temp.GetData();
+        return temp.getData();
     }
 
-    public int Size(){
+    public int size(){
         return size;
     }
 
-    public boolean IsEmpty() {
+    public boolean isEmpty() {
         return size == 0;
     }
 
-    public void Print(){                        //O(n)
-        Node<T> temp = head;
-        while (temp != null) {
-            System.out.print("[" + temp.GetData() + "] ");
-            temp = temp.GetNext();
-        }
-        System.out.println();
-    }
-
-    public Node<T> GetHead(){
+    public Node<T> getHead(){
         return head;
     }
 
-    public Node<T> GetTail(){
+    public Node<T> getTail(){
         return tail;
     }
 }

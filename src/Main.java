@@ -18,12 +18,14 @@ public class Main {
         System.out.println("Закончилось чтение файла");
 
         System.out.println("===============================================");
-        System.out.println("Подсчет средней оценки 10 и 11 классов...");
-        System.out.println("Средняя оценка: " + classroomDataGroups.GetMidGradeStudentHighSchool());
+        System.out.println("Подсчет средней оценкии 10 классов...");
+        System.out.println("Средняя оценка: " + classroomDataGroups.getMidGradeStudentByGroup(10));
+        System.out.println("Подсчет средней оценкии 11 классов...");
+        System.out.println("Средняя оценка: " + classroomDataGroups.getMidGradeStudentByGroup(11));
 
         System.out.println("===============================================");
         System.out.println("Ученики отличники старше 14 лет:");
-        classroomDataAge.PrintExcellentPersonsOlder14();
+        classroomDataAge.printExcellentPersonsOlder14();
 
         System.out.println("===============================================");
         Scanner scanner = new Scanner(System.in);
@@ -33,7 +35,7 @@ public class Main {
             family = scanner.nextLine();
             if(family.equals("0")) break;
 
-            classroomDataFamily.PrintPersonsByFamily(family);
+            classroomDataFamily.printPersonsByFamily(family);
         }
     }
 
@@ -68,9 +70,9 @@ public class Main {
                     int informatics = Integer.parseInt(record[9]);
 
                     Person person = new Person(family, name, age, group, physics, mathematics, rus, literature, geometry, informatics);
-                    classroomDataGroups.AddPerson(person);
-                    classroomDataFamily.AddPerson(person);
-                    classroomDataAge.AddPerson(person);
+                    classroomDataGroups.addPerson(person);
+                    classroomDataFamily.addPerson(person);
+                    classroomDataAge.addPerson(person);
                 } else {
                     System.out.println("Ошибка в записи: Недостаточно столбцов.");
                 }

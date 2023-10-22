@@ -11,24 +11,24 @@ public class Node <T> {
         this.next = null;
     }
 
-    public void SetNext(Node<T> next){
+    public void setNext(Node<T> next){
         this.next = next;
     }
-    public void SetPrev(Node<T> prev) {
+    public void setPrev(Node<T> prev) {
         this.prev = prev;
     }
-    public T GetData(){
+    public T getData(){
         return data;
     }
-    public Node<T> GetNext(){
+    public Node<T> getNext(){
         return next;
     }
-    public Node<T> GetPrev(){
+    public Node<T> getPrev(){
         return prev;
     }
 
     public boolean equals(Node<T> node){
-        return data.equals(node.GetData());
+        return data.equals(node.getData());
     }
 
     public int hashCode(){

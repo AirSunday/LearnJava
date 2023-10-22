@@ -1,6 +1,5 @@
 package Class;
 
-import Collection.Entry;
 import Collection.Node;
 import Collection.HashMap;
 import Collection.LinkedList;
@@ -10,35 +9,26 @@ import java.text.DecimalFormat;
 public class ClassroomDataGroups {
     private HashMap<Integer, Person> classroomGroups = new HashMap<Integer, Person>();
 
-    public ClassroomDataGroups(){}
-
-    public void AddPerson(Person person){           //O(n)
-        classroomGroups.Put(person.GetGroup(), person);
+    public void addPerson(Person person){           //O(n)
+        classroomGroups.put(person.getGroup(), person);
     }
 
-    public LinkedList<Entry<Integer, Person>> GetPersonsByGroup(int group){     //O(1)
-        return classroomGroups.GetLine(group);
+    public LinkedList<Person> getPersonsByGroup(int group){     //O(1)
+        return classroomGroups.getLine(group);
     }
 
-    double GetMidGradeStudentByGroup(int group){                //O(n)
-        LinkedList<Entry<Integer, Person>> persons = GetPersonsByGroup(group);          //O(1)
+    public double getMidGradeStudentByGroup(int group){                //O(n)
+        LinkedList<Person> persons = getPersonsByGroup(group);          //O(1)
         double sum = 0;
 
-        Node<Entry<Integer, Person>> person = persons.GetHead();
+        Node<Person> person = persons.getHead();
         while (person != null){
-            sum += person.GetData().GetValue().GetMidGrade();    //O(1)
-            person = person.GetNext();
+            sum += person.getData().getMidGrade();    //O(1)
+            person = person.getNext();
         }
 
-        return sum / persons.Size();
-    }
-
-    public double GetMidGradeStudentHighSchool(){       //O(2n)
-        double midGradeStudentsGroup10 = GetMidGradeStudentByGroup(10);     //O(n)
-        double midGradeStudentsGroup11 = GetMidGradeStudentByGroup(11);     //O(n)
-
         DecimalFormat df = new DecimalFormat("#.###");
-        String formattedValue = df.format((midGradeStudentsGroup10 + midGradeStudentsGroup11) / 2);
+        String formattedValue = df.format(sum / persons.size());
         return Double.parseDouble(formattedValue.replace(',', '.'));
     }
 

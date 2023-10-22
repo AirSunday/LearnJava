@@ -28,30 +28,30 @@ public class Person {
         this.informatics = informatics;
     }
 
-    public double GetMidGrade(){
+    public double getMidGrade(){
         double sum = physics + mathematics + rus + literature + geometry + informatics;
         DecimalFormat df = new DecimalFormat("#.###");
         String formattedValue = df.format(sum / 6.0);
         return Double.parseDouble(formattedValue.replace(',', '.'));
     }
 
-    public boolean IsExcellentStudent(){
-        return GetMidGrade() == 5.0;
+    public boolean isExcellentStudent(){
+        return getMidGrade() == 5.0;
     }
 
-    public int GetGroup() {
+    public int getGroup() {
         return group;
     }
 
-    public int GetAge() {
+    public int getAge() {
         return age;
     }
 
-    public String GetFamily() {
+    public String getFamily() {
         return family;
     }
 
-    public void Print(){
-        System.out.print(family + " " + name + "; age: " + age + "; group: " + group + "; mid grade: " + GetMidGrade());
+    public void print(){
+        System.out.print(family + " " + name + "; age: " + age + "; group: " + group + "; mid grade: " + getMidGrade());
     }
 }
