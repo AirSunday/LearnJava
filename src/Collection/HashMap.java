@@ -13,7 +13,7 @@ public class HashMap <K, V> {
         table = new LinkedList[capacity];
     }
 
-    public void Put(K key, V value) {
+    public void Put(K key, V value) {                   // O(n)
         if (key == null)
             return;
 
@@ -25,18 +25,14 @@ public class HashMap <K, V> {
 
         Node<Entry<K, V>> node = table[index].GetHead();
         while(node != null){
-            if(node.GetData().GetKey().equals(key)){
-                node.GetData().SetVolue(value);
-                return;
-            }
             node = node.GetNext();
         }
 
-        table[index].Add(new Entry<K, V>(key, value));
+        table[index].Add(new Entry<K, V>(key, value));  //O(1)
         size++;
     }
 
-    public V Get(K key) {
+    public V Get(K key) {                               // O(n)
         int index = key.hashCode() % table.length;
 
         if (table[index] == null) {
@@ -58,7 +54,7 @@ public class HashMap <K, V> {
         return size;
     }
 
-    public void Print(){
+    public void Print(){                                    //O(n)
         for(int i = 0; i < table.length; i++){
             Node<Entry<K, V>> node = table[i] == null ? null : table[i].GetHead();
             System.out.print("{ ");
@@ -71,7 +67,7 @@ public class HashMap <K, V> {
         }
     }
 
-    public LinkedList<Entry<K, V>> GetLine(K key){
+    public LinkedList<Entry<K, V>> GetLine(K key){          //O(1)
         int index = key.hashCode() % table.length;
         return table[index];
     }

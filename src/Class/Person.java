@@ -30,11 +30,9 @@ public class Person {
 
     public double GetMidGrade(){
         double sum = physics + mathematics + rus + literature + geometry + informatics;
-        double average = sum / 6.0;
-
-        // Форматирование ответа с округлением до 3 знаков после запятой
-        DecimalFormat decimalFormat = new DecimalFormat("#.###");
-        return Double.parseDouble(decimalFormat.format(average));
+        DecimalFormat df = new DecimalFormat("#.###");
+        String formattedValue = df.format(sum / 6.0);
+        return Double.parseDouble(formattedValue.replace(',', '.'));
     }
 
     public boolean IsExcellentStudent(){
@@ -54,6 +52,6 @@ public class Person {
     }
 
     public void Print(){
-        System.out.print(family + " " + name + " age: " + age + " group: " + group);
+        System.out.print(family + " " + name + "; age: " + age + "; group: " + group + "; mid grade: " + GetMidGrade());
     }
 }
