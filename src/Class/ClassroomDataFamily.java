@@ -1,8 +1,8 @@
 package Class;
-
-import Collection.HashMap;
-import Collection.LinkedList;
-import Collection.Node;
+                                    //Данный класс используется для решения задачи
+import Collection.HashMap;          //Нахождения учеников по фамилии
+import Collection.LinkedList;       //так как данные сгруппированы по первой букве имени
+import Collection.Node;             //мы точно знаем, в каком списке искать ученика
 
 public class ClassroomDataFamily {
     private HashMap<String, Person> classroomFamily = new HashMap<String, Person>(32);

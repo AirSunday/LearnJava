@@ -1,7 +1,7 @@
 package Class;
-
-import Collection.HashMap;
-import Collection.LinkedList;
+                                    //Данный класс решает задачу нахождения отличников старше 14 лет
+import Collection.HashMap;          //данные сгруппированы по годам и нам будет легко найти
+import Collection.LinkedList;       //людей определенного возраста
 import Collection.Node;
 
 public class ClassroomDataAge {

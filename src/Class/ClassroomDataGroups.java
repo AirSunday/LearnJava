@@ -1,10 +1,10 @@
 package Class;
 
-import Collection.Node;
-import Collection.HashMap;
-import Collection.LinkedList;
-
-import java.text.DecimalFormat;
+import Collection.Node;                 //Данный класс используется для решения задачи
+import Collection.HashMap;              //нахождения средней оценки 10 и 11 классов
+import Collection.LinkedList;           //нахождения средней оценки 10 и 11 классов
+                                        //так как идет группировка по классам из-за чего
+import java.text.DecimalFormat;         //получить список учеников не составит труда
 
 public class ClassroomDataGroups {
     private HashMap<Integer, Person> classroomGroups = new HashMap<Integer, Person>();
