@@ -1,4 +1,4 @@
-package Collection;
+package Class.Collection;
 
 public class Node <T> {
     private T data;

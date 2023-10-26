@@ -1,8 +1,8 @@
-package Class;
+package Class.Group;
 
 import java.text.DecimalFormat;
 
-public class Person {
+public class Person {                           // Класс для представления Ученика
     private String family;
     private String name;
     private int age;

@@ -1,7 +1,7 @@
-package Collection;
+package Class.Collection;
 
 public class HashMap <K, V> {
-    private int capacity = 16;
+    private int capacity = 32;
     private LinkedList<V>[] table;
     private int size = 0;
 

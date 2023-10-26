@@ -1,4 +1,4 @@
-package Collection;
+package Class.Collection;
 
 public class LinkedList<T> {
     private Node<T> head;
@@ -9,6 +9,13 @@ public class LinkedList<T> {
         this.head = null;
         this.tail = null;
         size = 0;
+    }
+
+    public LinkedList(T... values){
+        this();
+        for (T value : values) {
+            this.add(value);
+        }
     }
 
     public void add(T item){                    //O(1) Был добавлен хвост списку для быстрого добавления
