@@ -6,18 +6,32 @@ import Class.Group.DataGroup;
 import Class.Group.Person;                      //Команда для вывода всех отличников старше 14 лет
 import Interface.Command;
 
-public class CommandPrintExcellentPersonsOlder14 implements Command {
+public class CommandPrintExcellentPersonsByOlderAge implements Command {
     public DataGroup dataGroup;
 
-    public CommandPrintExcellentPersonsOlder14(DataGroup dataGroup){
+    public CommandPrintExcellentPersonsByOlderAge(DataGroup dataGroup){
         this.dataGroup = dataGroup;
     }
 
     @Override
-    public void execute() {
+    public void execute(String[] parameters) {
         System.out.println("===============================================");
-        System.out.println("Ученики отличники старше 14 лет:");
-        for(int i = 15; i < 32; i++){
+
+        if (parameters.length != 1) {
+            throw new IllegalArgumentException("Не верно заданы параметры команды");
+        }
+
+        int age = 0;
+        try{                //параметр должен быть числом, пытаемся преобразовать
+            age = Integer.parseInt(parameters[0]);
+        }
+        catch (NumberFormatException  e){
+            throw new NumberFormatException("Параметр должен быть числом");
+        }
+
+
+        System.out.println("Ученики отличники старше " + age + " лет:");
+        for(int i = age; i < 32; i++){
             LinkedList<Person> persons = dataGroup.getListPersonsByKey(i); //O(1)
             if(persons == null) continue;
 

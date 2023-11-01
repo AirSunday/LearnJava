@@ -8,19 +8,31 @@ import Interface.Command;
 
 import java.text.DecimalFormat;
 
-public class CommandGetMidGradeStudentByGroup10 implements Command {
+public class CommandGetMidGradeStudentByGroup implements Command {
     public DataGroup dataGroup;
 
-    public CommandGetMidGradeStudentByGroup10(DataGroup dataGroup){
+    public CommandGetMidGradeStudentByGroup(DataGroup dataGroup){
         this.dataGroup = dataGroup;
     }
 
     @Override
-    public void execute() {
+    public void execute(String[] parameters) {
         System.out.println("===============================================");
-        System.out.println("Подсчет средней оценкии 10 классов...");
+        if (parameters.length != 1) {
+            throw new IllegalArgumentException("Не верно заданы параметры команды");
+        }
 
-        LinkedList<Person> persons = dataGroup.getListPersonsByKey(10);          //O(1)
+        int group = 0;
+        try{
+            group = Integer.parseInt(parameters[0]);        //пытаемся преобразовать в число
+        }
+        catch (NumberFormatException  e){
+            throw new NumberFormatException("Параметр должен быть числом");
+        }
+
+        System.out.println("Подсчет средней оценкии " + group + " классов...");
+
+        LinkedList<Person> persons = dataGroup.getListPersonsByKey(group);          //O(1)
         double sum = 0;
 
         Node<Person> person = persons.getHead();

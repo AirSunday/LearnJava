@@ -12,15 +12,21 @@ public class CommandService {
                 new StudentService(new StudentsDataLoader())        // И метод чтения файла
         );
 
-        commandBuilder.build("help");      // выводим команду Help
-        String command = "";                        // считываем команды, пока не exit
-        while (!command.equals("exit")) {
+        commandBuilder.build("help", new String[0]);      // выводим команду Help
+        String input = "";                        // считываем команды, пока не exit
+        while (!input.equals("exit")) {
             System.out.println("===============================================");
             Scanner scanner = new Scanner(System.in);
             System.out.print("Введите команду: ");
-            command = scanner.nextLine();
+            input = scanner.nextLine().replaceAll("\\s{2,}", " "); // удаляем лишние пробелы
 
-            commandBuilder.build(command);
+            String[] parts = input.split(" "); // Разбиваем строку по пробелам
+            String command = parts[0];               // Название команды
+
+            String[] parameters = new String[parts.length - 1]; // массив полученых параметров
+            System.arraycopy(parts, 1, parameters, 0, parts.length - 1);
+
+            commandBuilder.build(command, parameters);          // Поиск команды и передача параметров
         }
     }
 }

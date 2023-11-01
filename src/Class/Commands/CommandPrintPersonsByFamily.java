@@ -17,12 +17,13 @@ public class CommandPrintPersonsByFamily implements Command {
     }
 
     @Override
-    public void execute() {
+    public void execute(String[] parameters) {
         System.out.println("===============================================");
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Введите фамилию ученика: ");
-        String family = "";
-        family = scanner.nextLine();
+        if (parameters.length != 1) {
+            throw new IllegalArgumentException("Не верно заданы параметры команды");
+        }
+
+        String family = parameters[0];       // получили имя ученика
 
         LinkedList<Person> persons = dataGroup.getListPersonsByKey(family.substring(0, 1).toUpperCase());
         Node<Person> person = persons.getHead();
