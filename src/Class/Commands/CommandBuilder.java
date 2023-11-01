@@ -29,4 +29,28 @@ public class CommandBuilder {
     public Command buildCommandHelp(){
         return new CommandHelp();
     }
+
+    public void build(String command) {
+        switch (command){                       // перебор всех вариантов команд (не самое лаконичное решение)
+            case "cmd1":
+                buildCommandPrintExcellentPersonsOlder14().execute();
+                break;
+            case "cmd2":
+                buildCommandGetMidGradeStudentByGroup10().execute();
+                break;
+            case "cmd3":
+                buildCommandGetMidGradeStudentByGroup11().execute();
+                break;
+            case "cmd4":
+                buildCommandPrintPersonsByFamily().execute();
+                break;
+            case "help":
+                buildCommandHelp().execute();
+                break;
+            case "exit":
+                break;
+            default:
+                System.out.println("Команды не существует");
+        }
+    }
 }

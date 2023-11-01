@@ -6,6 +6,7 @@ import Class.Group.DataGroup;
 import Class.Group.Person;                  //Команда для Нахождения учеников по фамилии
 import Interface.Command;                   //(Выводим всех учеников, имя которых начинается с одной буквы)
 
+import java.util.Locale;
 import java.util.Scanner;
 
 public class CommandPrintPersonsByFamily implements Command {
@@ -26,7 +27,7 @@ public class CommandPrintPersonsByFamily implements Command {
         LinkedList<Person> persons = dataGroup.getListPersonsByKey(family.substring(0, 1).toUpperCase());
         Node<Person> person = persons.getHead();
         while (person != null){
-            if(person.getData().getFamily().equals(family)){
+            if(person.getData().getFamily().toLowerCase().startsWith(family.toLowerCase())){
                 System.out.print("[");
                 person.getData().print();
                 System.out.print("]");
