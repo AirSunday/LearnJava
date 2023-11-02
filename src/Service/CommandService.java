@@ -12,7 +12,7 @@ public class CommandService {
                 new StudentService(new StudentsDataLoader())        // И метод чтения файла
         );
 
-        commandBuilder.build("help", new String[0]);      // выводим команду Help
+        commandBuilder.run("help", new String[0]);      // выводим команду Help
         String input = "";                        // считываем команды, пока не exit
         while (!input.equals("exit")) {
             System.out.println("===============================================");
@@ -26,7 +26,7 @@ public class CommandService {
             String[] parameters = new String[parts.length - 1]; // массив полученых параметров
             System.arraycopy(parts, 1, parameters, 0, parts.length - 1);
 
-            commandBuilder.build(command, parameters);          // Поиск команды и передача параметров
+            commandBuilder.run(command, parameters);          // Поиск команды и передача параметров
         }
     }
 }

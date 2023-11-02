@@ -17,7 +17,7 @@ public class CommandGetMidGradeStudentByGroup implements Command {
 
     @Override
     public void execute(String[] parameters) {
-        System.out.println("===============================================");
+
         if (parameters.length != 1) {
             throw new IllegalArgumentException("Не верно заданы параметры команды");
         }
@@ -34,6 +34,11 @@ public class CommandGetMidGradeStudentByGroup implements Command {
 
         LinkedList<Person> persons = dataGroup.getListPersonsByKey(group);          //O(1)
         double sum = 0;
+
+        if(persons == null) {
+            System.out.println("Средняя оценка: " + 0);
+            return;
+        }
 
         Node<Person> person = persons.getHead();
         while (person != null){

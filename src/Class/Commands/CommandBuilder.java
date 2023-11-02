@@ -25,30 +25,38 @@ public class CommandBuilder {
     public Command buildCommandHelp(){
         return new CommandHelp();
     }
+    Command build (String command) {
+        Command executor = null;
+        switch (command) {                       // перебор всех вариантов команд (не самое лаконичное решение)
+            case "cmd1":
+                executor = buildCommandPrintExcellentPersonsByOlderAge();
+                break;
+            case "cmd2":
+                executor = buildCommandGetMidGradeStudentByGroup();
+                break;
+            case "cmd3":
+                executor = buildCommandPrintPersonsByFamily();
+                break;
+            case "help":
+                executor = buildCommandHelp();
+                break;
+            case "exit":
+                break;
+            default:
+                System.out.println("Команды не существует");
+        }
+        return executor;
+    }
 
-    public void build(String command, String[] parameters) {
-        try {
-            switch (command) {                       // перебор всех вариантов команд (не самое лаконичное решение)
-                case "cmd1":
-                    buildCommandPrintExcellentPersonsByOlderAge().execute(parameters);
-                    break;
-                case "cmd2":
-                    buildCommandGetMidGradeStudentByGroup().execute(parameters);
-                    break;
-                case "cmd3":
-                    buildCommandPrintPersonsByFamily().execute(parameters);
-                    break;
-                case "help":
-                    buildCommandHelp().execute(parameters);
-                    break;
-                case "exit":
-                    break;
-                default:
-                    System.out.println("Команды не существует");
+    public void run(String command, String[] parameters) {
+        System.out.println("===============================================");
+        Command executor = build(command);
+        if(executor != null)
+            try {
+                executor.execute(parameters);
             }
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
+            catch (Exception e){
+                System.out.println(e.getMessage());
+            }
     }
 }
