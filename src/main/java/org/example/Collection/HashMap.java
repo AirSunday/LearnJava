@@ -1,4 +1,4 @@
-package Class.Collection;
+package org.example.Collection;
 
 public class HashMap <K, V> {
     private int capacity = 32;

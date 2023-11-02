@@ -1,4 +1,4 @@
-package Class.Group;
+package org.example.Group;
 
 import java.text.DecimalFormat;
 
@@ -42,14 +42,19 @@ public class Person {                           // Класс для предс�
     public int getGroup() {
         return group;
     }
-
     public int getAge() {
         return age;
     }
-
     public String getFamily() {
         return family;
     }
+    public String getName() { return name; }
+    public int getPhysics() { return physics; }
+    public int getMathematics() { return mathematics; }
+    public int getRus() { return rus; }
+    public int getLiterature() { return literature; }
+    public int getGeometry() { return geometry; }
+    public int getInformatics() { return informatics; }
 
     public void print(){
         System.out.print(family + " " + name + "; age: " + age + "; group: " + group + "; mid grade: " + getMidGrade());

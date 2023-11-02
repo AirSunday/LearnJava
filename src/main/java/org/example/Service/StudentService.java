@@ -1,9 +1,9 @@
-package Service;
+package org.example.Service;
 
-import Class.Group.DataGroup;
-import Class.Collection.LinkedList;             // Класс для работы с группировками учеников
-import Class.Group.Person;                      // Здесь можно добавить свои новые группировки
-import Interface.DataLoader;
+import org.example.Group.DataGroup;
+import org.example.Collection.LinkedList;             // Класс для работы с группировками учеников
+import org.example.Group.Person;
+import org.example.DataLoader.DataLoader;
 
 public class StudentService {
     // Группировка по группам

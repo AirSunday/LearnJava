@@ -1,4 +1,4 @@
-package Class.Collection;
+package org.example.Collection;
 
 public class LinkedList<T> {
     private Node<T> head;

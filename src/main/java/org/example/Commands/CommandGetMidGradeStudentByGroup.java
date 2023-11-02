@@ -1,10 +1,9 @@
-package Class.Commands;
+package org.example.Commands;
 
-import Class.Collection.LinkedList;
-import Class.Collection.Node;
-import Class.Group.DataGroup;                   //Команда для вывода средней оценки в 10 классах
-import Class.Group.Person;
-import Interface.Command;
+import org.example.Collection.LinkedList;
+import org.example.Collection.Node;
+import org.example.Group.DataGroup;                   //Команда для вывода средней оценки в 10 классах
+import org.example.Group.Person;
 
 import java.text.DecimalFormat;
 

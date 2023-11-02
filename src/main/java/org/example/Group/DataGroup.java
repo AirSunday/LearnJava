@@ -1,9 +1,8 @@
-package Class.Group;
+package org.example.Group;
 
-import Class.Collection.HashMap;
-import Class.Collection.LinkedList;             //Класс для группировок по лямбда выражению
-import Class.Collection.Node;
-import Interface.GroupCriterion;
+import org.example.Collection.HashMap;
+import org.example.Collection.LinkedList;             //Класс для группировок по лямбда выражению
+
 
 public class DataGroup<K> {
     public HashMap<K, Person> dataGroup = new HashMap<>();          //Храним (Ключ, список учеников)

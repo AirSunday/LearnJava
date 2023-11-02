@@ -1,13 +1,10 @@
-package Class.Commands;
+package org.example.Commands;
 
-import Class.Collection.LinkedList;
-import Class.Collection.Node;
-import Class.Group.DataGroup;
-import Class.Group.Person;                  //Команда для Нахождения учеников по фамилии
-import Interface.Command;                   //(Выводим всех учеников, имя которых начинается с одной буквы)
+import org.example.Collection.LinkedList;
+import org.example.Collection.Node;
+import org.example.Group.DataGroup;
+import org.example.Group.Person;
 
-import java.util.Locale;
-import java.util.Scanner;
 
 public class CommandPrintPersonsByFamily implements Command {
     public DataGroup dataGroup;

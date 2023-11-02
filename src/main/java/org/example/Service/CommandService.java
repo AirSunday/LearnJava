@@ -1,18 +1,17 @@
-package Service;
+package org.example.Service;
 
-import Class.Commands.CommandBuilder;
-import Class.DataLoader.StudentsDataLoader;
-import Interface.Command;
+import org.example.Commands.CommandBuilder;
+import org.example.DataLoader.StudentsDataLoader;
 
 import java.util.Scanner;
 
 public class CommandService {
     public void start(){
         CommandBuilder commandBuilder = new CommandBuilder(         // Данный класс принимает сервис для работы с группировками
-                new StudentService(new StudentsDataLoader())        // И метод чтения файла
+                new StudentService(new StudentsDataLoader())        // и метод чтения файла
         );
 
-        commandBuilder.run("help", new String[0]);      // выводим команду Help
+        commandBuilder.run("help", null);      // выводим команду Help
         String input = "";                        // считываем команды, пока не exit
         while (!input.equals("exit")) {
             System.out.println("===============================================");

@@ -1,19 +1,18 @@
-package Class.DataLoader;
+package org.example.DataLoader;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;                     //Класс для чтения файла и загрузки данных
-import Class.Group.*;                           //в переданные DataGroup-ы
-import Class.Collection.LinkedList;
-import Class.Collection.Node;
-import Interface.DataLoader;
+import org.example.Group.*;                     //в переданные DataGroup-ы
+import org.example.Collection.LinkedList;
+import org.example.Collection.Node;
 
 public class StudentsDataLoader implements DataLoader {
     @Override
     public void loadStudentData(LinkedList<DataGroup> dataGroups) {     // Получаем список DataGroup, куда надо записать учениеов
 
         System.out.println("Началось чтение файла...");
-        String csvFile = "src/Data/students.csv";
+        String csvFile = "src/main/java/org/example/Data/students.csv";
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String line;

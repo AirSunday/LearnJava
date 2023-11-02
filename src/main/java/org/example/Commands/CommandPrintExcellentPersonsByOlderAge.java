@@ -1,10 +1,10 @@
-package Class.Commands;
+package org.example.Commands;
 
-import Class.Collection.LinkedList;
-import Class.Collection.Node;
-import Class.Group.DataGroup;
-import Class.Group.Person;                      //Команда для вывода всех отличников старше 14 лет
-import Interface.Command;
+import org.example.Collection.LinkedList;
+import org.example.Collection.Node;
+import org.example.Group.DataGroup;
+import org.example.Group.Person;
+
 
 public class CommandPrintExcellentPersonsByOlderAge implements Command {
     public DataGroup dataGroup;

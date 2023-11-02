@@ -1,14 +1,8 @@
-package Class.Commands;
-
-import Interface.Command;       //Команда Help
+package org.example.Commands;
 
 public class CommandHelp implements Command {
     @Override
     public void execute(String[] parameters){
-
-        if (parameters.length != 0) {
-            throw new IllegalArgumentException("Не верно заданы параметры команды");
-        }
 
         System.out.println("Помощь");
         System.out.println("- cmd1 <возраст>    - вывести всех отличников старше введенного возраста");
