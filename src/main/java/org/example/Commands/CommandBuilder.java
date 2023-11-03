@@ -1,30 +1,28 @@
 package org.example.Commands;
 
-import org.example.Service.StorageService;
-import org.example.Service.StudentService;                  //сборщик команд
+import org.example.Service.StudentService;
 
 public class CommandBuilder {
-    private final StorageService storageService;                //поле, где хранится StorageService для получения доступа к БД
+    private final StudentService studentService;                //поле, где хранится StorageService для получения доступа к БД
 
-    public CommandBuilder(StorageService storageService) {
-        this.storageService = storageService;
+    public CommandBuilder(StudentService studentService) {
+        this.studentService = studentService;
     }
 
     public Command buildCommandPrintExcellentPersonsByOlderAge(){
-        return new CommandPrintExcellentPersonsByOlderAge(storageService);
+        return new CommandPrintExcellentPersonsByOlderAge(studentService);
     }
 
     public Command buildCommandGetMidGradeStudentByGroup(){
-        return new CommandGetMidGradeStudentByGroup(storageService);
+        return new CommandGetMidGradeStudentByGroup(studentService);
     }
 
     public Command buildCommandPrintPersonsByFamily(){
-        return new CommandPrintPersonsByFamily(storageService);
+        return new CommandPrintPersonsByFamily(studentService);
     }
     public Command buildCommandFillDB(){
-        return new CommandFillDB(storageService);
+        return new CommandFillDB(studentService);
     }
-
 
     public Command buildCommandHelp(){
         return new CommandHelp();

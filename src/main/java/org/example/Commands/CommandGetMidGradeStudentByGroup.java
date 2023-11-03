@@ -1,18 +1,11 @@
 package org.example.Commands;
 
-import org.example.Collection.LinkedList;
-import org.example.Collection.Node;
-import org.example.Group.DataGroup;                   //Команда для вывода средней оценки в 10 классах
-import org.example.Group.Person;
-import org.example.Service.JDBCStorageService;
-import org.example.Service.StorageService;
-
-import java.text.DecimalFormat;
+import org.example.Service.StudentService;
 
 public class CommandGetMidGradeStudentByGroup implements Command {
-    private final StorageService storageService;
-    public CommandGetMidGradeStudentByGroup(StorageService storageService){
-        this.storageService = storageService;
+    private final StudentService studentService;
+    public CommandGetMidGradeStudentByGroup(StudentService studentService){
+        this.studentService = studentService;
     }
 
     @Override
@@ -24,11 +17,12 @@ public class CommandGetMidGradeStudentByGroup implements Command {
 
         boolean fast = false;
 
-        if (parameters.length == 2 && !parameters[1].equals("fast")) {
-            throw new IllegalArgumentException("Не верно заданы параметры команды");
-        }
-        else {
-            fast = true;
+        if(parameters.length == 2) {
+            if (!parameters[1].equals("fast")) {
+                throw new IllegalArgumentException("Не верно заданы параметры команды");
+            } else {
+                fast = true;
+            }
         }
 
         int group = 0;
@@ -39,11 +33,10 @@ public class CommandGetMidGradeStudentByGroup implements Command {
             throw new NumberFormatException("Параметр должен быть числом");
         }
 
-
-
         System.out.println("Подсчет средней оценкии " + group + " классов...");
-;
-        double grade = fast ? storageService.fast_getMidGradeStudentByGroup(group) : storageService.getMidGradeStudentByGroup(group);
+
+        double grade = fast ?   studentService.fast_getMidGradeStudentsByGroup(group) :
+                                studentService.getMidGradeStudentsByGroup(group);
 
         System.out.println("Средняя оценка: " + grade);
     }

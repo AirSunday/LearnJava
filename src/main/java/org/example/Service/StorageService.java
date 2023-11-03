@@ -1,14 +1,16 @@
 package org.example.Service;
 
 import org.example.Collection.LinkedList;
-import org.example.model.Student;
+import org.example.model.ModelStudent;
+import org.example.model.ModelStudentFast;
 
 public interface StorageService {
     void fillDB();
-    Double getMidGradeStudentByGroup(int group);
-    LinkedList<Student> printExcellentPersonsByOlderAge(int age);
-    LinkedList<Student> printPersonByFamily(String family);
-    Double fast_getMidGradeStudentByGroup(int group);
-    LinkedList<Student> fast_printExcellentPersonsByOlderAge(int age);
-    LinkedList<Student> fast_printPersonByFamily(String family);
+    LinkedList<ModelStudent> getStudentsByGroup(int group);
+    LinkedList<ModelStudent> getPersonsByOlderAge(int age);
+    LinkedList<ModelStudent> getPersonByFamily(String family);
+
+    LinkedList<ModelStudentFast> fast_getStudentsByGroup(int group);
+    LinkedList<ModelStudentFast> fast_getPersonsByOlderAge(int age);
+    LinkedList<ModelStudentFast> fast_getPersonByFamily(String family);
 }

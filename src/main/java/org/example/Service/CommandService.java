@@ -1,14 +1,13 @@
 package org.example.Service;
 
 import org.example.Commands.CommandBuilder;
-import org.example.DataLoader.StudentsDataLoader;
 
 import java.util.Scanner;
 
 public class CommandService {
     public void start(){
         CommandBuilder commandBuilder = new CommandBuilder(         // Данный класс принимает сервис для работы с БД
-                new JDBCStorageService()
+                new BaseStudentService()
         );
 
         commandBuilder.run("help", null);      // выводим команду Help
