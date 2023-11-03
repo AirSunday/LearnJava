@@ -17,7 +17,7 @@ public class CommandGetMidGradeStudentByGroup implements Command {
 
         boolean fast = false;
 
-        if(parameters.length == 2) {
+        if(parameters.length == 2 || parameters.length < 1) {
             if (!parameters[1].equals("fast")) {
                 throw new IllegalArgumentException("Не верно заданы параметры команды");
             } else {

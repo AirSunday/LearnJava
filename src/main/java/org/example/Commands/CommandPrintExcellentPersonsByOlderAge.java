@@ -16,7 +16,7 @@ public class CommandPrintExcellentPersonsByOlderAge implements Command {
     @Override
     public void execute(String[] parameters) {
 
-        if (parameters.length > 2) {
+        if (parameters.length > 2 || parameters.length < 1) {
             throw new IllegalArgumentException("Не верно заданы параметры команды");
         }
 
