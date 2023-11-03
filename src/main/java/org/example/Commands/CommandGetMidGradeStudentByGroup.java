@@ -4,21 +4,31 @@ import org.example.Collection.LinkedList;
 import org.example.Collection.Node;
 import org.example.Group.DataGroup;                   //Команда для вывода средней оценки в 10 классах
 import org.example.Group.Person;
+import org.example.Service.JDBCStorageService;
+import org.example.Service.StorageService;
 
 import java.text.DecimalFormat;
 
 public class CommandGetMidGradeStudentByGroup implements Command {
-    public DataGroup dataGroup;
-
-    public CommandGetMidGradeStudentByGroup(DataGroup dataGroup){
-        this.dataGroup = dataGroup;
+    private final StorageService storageService;
+    public CommandGetMidGradeStudentByGroup(StorageService storageService){
+        this.storageService = storageService;
     }
 
     @Override
     public void execute(String[] parameters) {
 
-        if (parameters.length != 1) {
+        if (parameters.length > 2) {
             throw new IllegalArgumentException("Не верно заданы параметры команды");
+        }
+
+        boolean fast = false;
+
+        if (parameters.length == 2 && !parameters[1].equals("fast")) {
+            throw new IllegalArgumentException("Не верно заданы параметры команды");
+        }
+        else {
+            fast = true;
         }
 
         int group = 0;
@@ -29,24 +39,12 @@ public class CommandGetMidGradeStudentByGroup implements Command {
             throw new NumberFormatException("Параметр должен быть числом");
         }
 
+
+
         System.out.println("Подсчет средней оценкии " + group + " классов...");
+;
+        double grade = fast ? storageService.fast_getMidGradeStudentByGroup(group) : storageService.getMidGradeStudentByGroup(group);
 
-        LinkedList<Person> persons = dataGroup.getListPersonsByKey(group);          //O(1)
-        double sum = 0;
-
-        if(persons == null) {
-            System.out.println("Средняя оценка: " + 0);
-            return;
-        }
-
-        Node<Person> person = persons.getHead();
-        while (person != null){
-            sum += person.getData().getMidGrade();    //O(1)
-            person = person.getNext();
-        }
-
-        DecimalFormat df = new DecimalFormat("#.###");
-        String formattedValue = df.format(sum / persons.size());
-        System.out.println("Средняя оценка: " + formattedValue);
+        System.out.println("Средняя оценка: " + grade);
     }
 }

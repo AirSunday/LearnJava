@@ -25,6 +25,19 @@ public class JDBCStorageService implements StorageService {
     public LinkedList<Student> printPersonByFamily(String family){
         return JDBCStorageService.TransactionScript.getInstance().printMidGradeByFamily(family);
     }
+    @Override
+    public Double fast_getMidGradeStudentByGroup(int group){
+        return JDBCStorageService.TransactionScript.getInstance().fast_getMidGradeStudentByGroup(group);
+    }
+    @Override
+    public LinkedList<Student> fast_printExcellentPersonsByOlderAge(int age){
+        return JDBCStorageService.TransactionScript.getInstance().fast_printExcellentPersonsByOlderAge(age);
+    }
+    @Override
+    public LinkedList<Student> fast_printPersonByFamily(String family){
+        return JDBCStorageService.TransactionScript.getInstance().fast_printMidGradeByFamily(family);
+    }
+
     public static final class TransactionScript {
         private final String url      = "jdbc:postgresql://localhost:5432/LearnJava";
         private final String login    = "postgres";
@@ -53,10 +66,11 @@ public class JDBCStorageService implements StorageService {
 
         public Double getMidGradeByStudentId(String student_id){                //получить среднюю оценку ученика
             try {
+                connection.setAutoCommit(false);
+
                 PreparedStatement findGradesByStudent = connection.prepareStatement(
                         "select * from grade where student_id = " + student_id
                 );
-
                 try(ResultSet resultSet = findGradesByStudent.executeQuery()){
                     double sum = 0;
                     int countSubjects = 0;
@@ -69,6 +83,7 @@ public class JDBCStorageService implements StorageService {
                     if(countSubjects != 0) {
                         DecimalFormat df = new DecimalFormat("#.###");
                         String formattedValue = df.format(sum / countSubjects);
+                        connection.commit();
                         return Double.parseDouble(formattedValue.replace(',', '.'));
                     }
                     return 0.0;
@@ -81,10 +96,14 @@ public class JDBCStorageService implements StorageService {
         }
 
         public Double getMidGradeStudentByGroup(int group){             // Подсчет средней оуенки по группе
-            try (PreparedStatement studentsByGroup = connection.prepareStatement(
-                    "select * from students s \n" +
-                            "inner join \"group\" g on s.group = g.id \n" +
-                            "where g.number = ?");) {
+            try {
+                connection.setAutoCommit(false);
+
+                PreparedStatement studentsByGroup = connection.prepareStatement(
+                        "select * from student s \n" +
+                                "inner join \"group\" g on s.group_id = g.id \n" +
+                                "inner join grade gr on s.id = gr.student_id \n" +
+                                "where g.number = ?");
 
                 studentsByGroup.setInt(1, group);
                 try(ResultSet resultSet = studentsByGroup.executeQuery();){
@@ -92,15 +111,15 @@ public class JDBCStorageService implements StorageService {
                     int countStudent = 0;
                     while (resultSet.next()) {      //Рассмотрим каждого студента отдельно
                         // Получаем id студента
-                        String student_id = String.valueOf(resultSet.getInt("id"));
-
-                        Double grade = getMidGradeByStudentId(student_id);   // Узнаем среднюю оценку студента
+                        double grade = resultSet.getDouble("grade");   // Узнаем среднюю оценку студента
                         sum += grade;
                         countStudent++;
                     }
                     if(countStudent != 0) {
                         DecimalFormat df = new DecimalFormat("#.###");
                         String formattedValue = df.format(sum / countStudent);
+
+                        connection.commit();
                         return Double.parseDouble(formattedValue.replace(',', '.'));
                     }
                     return 0.0;
@@ -114,10 +133,13 @@ public class JDBCStorageService implements StorageService {
 
         public LinkedList<Student> printExcellentPersonsByOlderAge(int age) {
             LinkedList<Student> students = new LinkedList<>();
-            try (PreparedStatement findStudentOrderAge = connection.prepareStatement(   // получаем всех студентов старше age
-                    "select * from student s \n" +
-                            "inner join \"group\" g on s.group = g.id \n" +
-                            "where s.age > " + age );){
+            try {
+                connection.setAutoCommit(false);
+
+                PreparedStatement findStudentOrderAge = connection.prepareStatement(   // получаем всех студентов старше age
+                        "select * from student s \n" +
+                                "inner join \"group\" g on s.group_id= g.id \n" +
+                                "where s.age > " + age );
 
                 try (ResultSet resultSet = findStudentOrderAge.executeQuery()){
                     while (resultSet.next()){
@@ -136,6 +158,7 @@ public class JDBCStorageService implements StorageService {
                             ));
                         }
                     }
+                    connection.commit();
                     return students;
                 }
             }
@@ -147,10 +170,13 @@ public class JDBCStorageService implements StorageService {
 
         public LinkedList<Student> printMidGradeByFamily(String family){
             LinkedList<Student> students = new LinkedList<>();
-            try (PreparedStatement findStudentByFamily = connection.prepareStatement(   // получаем всех студентов старше age
-                    "select * from student s \n" +
-                            "inner join \"group\" g on s.group = g.id \n" +
-                            "where s.family LIKE  \'" + family + "%\'");){          // поиск всех людей по префексу
+            try {          // поиск всех людей по префексу
+                connection.setAutoCommit(false);
+
+                PreparedStatement findStudentByFamily = connection.prepareStatement(   // получаем всех студентов старше age
+                        "select * from student s \n" +
+                                "inner join \"group\" g on s.group_id = g.id \n" +
+                                "where s.family LIKE  \'" + family + "%\'");
 
                 try (ResultSet resultSet = findStudentByFamily.executeQuery()){
                     while (resultSet.next()){
@@ -167,6 +193,118 @@ public class JDBCStorageService implements StorageService {
                                 grade
                         ));
                     }
+
+                    connection.commit();
+                    return students;
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        public Double fast_getMidGradeStudentByGroup(int group){             // Подсчет средней оуенки по группе
+            try  {
+                connection.setAutoCommit(false);
+
+                PreparedStatement studentsByGroup = connection.prepareStatement(
+                        "select * from student s \n" +
+                                "inner join \"group\" g on s.group_id = g.id \n" +
+                                "inner join mid_grade gr on s.id = gr.student_id \n" +
+                                "where g.number = ?");
+
+                studentsByGroup.setInt(1, group);
+                try(ResultSet resultSet = studentsByGroup.executeQuery();){
+                    double sum = 0;
+                    int countStudent = 0;
+                    while (resultSet.next()) {      //Рассмотрим каждого студента отдельно
+                        // Получаем id студента
+                        double grade = resultSet.getDouble("grade");   // Узнаем среднюю оценку студента
+                        sum += grade;
+                        countStudent++;
+                    }
+                    if(countStudent != 0) {
+                        DecimalFormat df = new DecimalFormat("#.###");
+                        String formattedValue = df.format(sum / countStudent);
+
+                        connection.commit();
+                        return Double.parseDouble(formattedValue.replace(',', '.'));
+                    }
+                    return 0.0;
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return 0.0;
+            }
+        }
+
+        public LinkedList<Student> fast_printExcellentPersonsByOlderAge(int age) {
+            LinkedList<Student> students = new LinkedList<>();
+            try {
+                connection.setAutoCommit(false);
+
+                PreparedStatement findStudentOrderAge = connection.prepareStatement(   // получаем всех студентов старше age
+                        "select * from student s \n" +
+                                "inner join \"group\" g on s.group_id= g.id \n" +
+                                "inner join mid_grade gr on gr.student_id = s.id \n" +
+                                "where s.age > " + age );
+
+                try (ResultSet resultSet = findStudentOrderAge.executeQuery()){
+                    while (resultSet.next()){
+                        //получаем id ученика
+                        String student_id = String.valueOf(resultSet.getInt("id"));
+                        double grade = resultSet.getDouble("grade");   // Узнаем среднюю оценку студента
+
+                        if(grade == 5.0){
+                            students.add(new Student(
+                                    String.valueOf(resultSet.getInt("id")),
+                                    resultSet.getString("name"),
+                                    resultSet.getString("family"),
+                                    resultSet.getInt("age"),
+                                    resultSet.getInt("number"),
+                                    grade
+                            ));
+                        }
+                    }
+                    connection.commit();
+                    return students;
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        public LinkedList<Student> fast_printMidGradeByFamily(String family){
+            LinkedList<Student> students = new LinkedList<>();
+            try {          // поиск всех людей по префексу
+                connection.setAutoCommit(false);
+
+                PreparedStatement findStudentByFamily = connection.prepareStatement(   // получаем всех студентов старше age
+                        "select * from student s \n" +
+                                "inner join \"group\" g on s.group_id = g.id \n" +
+                                "inner join mid_grade gr on gr.student_id = s.id \n" +
+                                "where s.family LIKE  \'" + family + "%\'");
+
+                try (ResultSet resultSet = findStudentByFamily.executeQuery()){
+                    while (resultSet.next()){
+                        //получаем id ученика
+                        String student_id = String.valueOf(resultSet.getInt("id"));
+                        double grade = resultSet.getDouble("grade");   // Узнаем среднюю оценку студента
+
+                        students.add(new Student(
+                                String.valueOf(resultSet.getInt("id")),
+                                resultSet.getString("name"),
+                                resultSet.getString("family"),
+                                resultSet.getInt("age"),
+                                resultSet.getInt("number"),
+                                grade
+                        ));
+                    }
+                    connection.commit();
                     return students;
                 }
             }

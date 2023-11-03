@@ -17,6 +17,10 @@ public class Student {                           // Класс для предс
         this.midGrade = midGrade;
     }
 
+    public void print(){
+        System.out.print(family + " " + name + "; age: " + age + "; group: " + group + "; mid grade: " + midGrade);
+    }
+
     public String getStudentId(){ return student_id; }
     public String getName(){ return name; }
     public String getFamily(){

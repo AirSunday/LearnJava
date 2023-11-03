@@ -38,3 +38,14 @@ CREATE TABLE "grade"(
                             REFERENCES student (id) MATCH SIMPLE
                             ON UPDATE NO ACTION ON DELETE CASCADE
 );
+
+CREATE TABLE "mid_grade"(
+                        "id" bigserial NOT NULL,
+                        CONSTRAINT mid_grade_pkey PRIMARY KEY (id),
+                        "grade" DOUBLE PRECISION NOT NULL,
+
+                        "student_id" bigint NOT NULL,
+                        CONSTRAINT fk_student_id FOREIGN KEY (student_id)
+                            REFERENCES student (id) MATCH SIMPLE
+                            ON UPDATE NO ACTION ON DELETE CASCADE
+);

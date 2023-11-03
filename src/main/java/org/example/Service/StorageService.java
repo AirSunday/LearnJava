@@ -8,4 +8,7 @@ public interface StorageService {
     Double getMidGradeStudentByGroup(int group);
     LinkedList<Student> printExcellentPersonsByOlderAge(int age);
     LinkedList<Student> printPersonByFamily(String family);
+    Double fast_getMidGradeStudentByGroup(int group);
+    LinkedList<Student> fast_printExcellentPersonsByOlderAge(int age);
+    LinkedList<Student> fast_printPersonByFamily(String family);
 }

@@ -1,25 +1,30 @@
 package org.example.Commands;
 
+import org.example.Service.StorageService;
 import org.example.Service.StudentService;                  //сборщик команд
 
 public class CommandBuilder {
-    private final StudentService studentService;                //поле, где хранится StudentService для получения доступа к группировкам
+    private final StorageService storageService;                //поле, где хранится StorageService для получения доступа к БД
 
-    public CommandBuilder(StudentService studentService) {
-        this.studentService = studentService;
+    public CommandBuilder(StorageService storageService) {
+        this.storageService = storageService;
     }
 
     public Command buildCommandPrintExcellentPersonsByOlderAge(){
-        return new CommandPrintExcellentPersonsByOlderAge(studentService.getAgeDataGroup());
+        return new CommandPrintExcellentPersonsByOlderAge(storageService);
     }
 
     public Command buildCommandGetMidGradeStudentByGroup(){
-        return new CommandGetMidGradeStudentByGroup(studentService.getClassroomDataGroup());
+        return new CommandGetMidGradeStudentByGroup(storageService);
     }
 
     public Command buildCommandPrintPersonsByFamily(){
-        return new CommandPrintPersonsByFamily(studentService.getFamilyDataGroup());
+        return new CommandPrintPersonsByFamily(storageService);
     }
+    public Command buildCommandFillDB(){
+        return new CommandFillDB(storageService);
+    }
+
 
     public Command buildCommandHelp(){
         return new CommandHelp();
@@ -31,7 +36,8 @@ public class CommandBuilder {
             CMD2("cmd2"),
             CMD3("cmd3"),
             HELP("help"),
-            EXIT("exit");
+            EXIT("exit"),
+            FILLDB("filldb");
 
             private final String commandString;
 
@@ -53,7 +59,6 @@ public class CommandBuilder {
             }
         }
 
-        Command executor = null;
         CommandType type = CommandType.fromString(command);
 
         if (type == null) {
@@ -70,6 +75,8 @@ public class CommandBuilder {
                 return buildCommandPrintPersonsByFamily();
             case HELP:
                 return buildCommandHelp();
+            case FILLDB:
+                return buildCommandFillDB();
             case EXIT:
                 break;
         }

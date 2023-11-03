@@ -7,11 +7,12 @@ import java.util.Scanner;
 
 public class CommandService {
     public void start(){
-        CommandBuilder commandBuilder = new CommandBuilder(         // Данный класс принимает сервис для работы с группировками
-                new StudentService(new StudentsDataLoader())        // и метод чтения файла
+        CommandBuilder commandBuilder = new CommandBuilder(         // Данный класс принимает сервис для работы с БД
+                new JDBCStorageService()
         );
 
         commandBuilder.run("help", null);      // выводим команду Help
+
         String input = "";                        // считываем команды, пока не exit
         while (!input.equals("exit")) {
             System.out.println("===============================================");

@@ -26,20 +26,41 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
         fillStudent();
     }
     public void clearDB() {         // очишаем все таблицы
-        String[] tables = {"student", "grade", "group", "subject"};
-        for (String table : tables) {
-            clearTable(table);
+        try {
+            connection.setAutoCommit(false);
+            String[] tables = {"student", "grade", "group", "subject"};
+            for (String table : tables) {
+                clearTable(table);
+            }
+            connection.commit();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
         }
     }
-    public void fillGroup(){        // добавляем классы 1 - 11
-        for(int i = 1; i <= 11; i++) {
-            addGroup(i);
+    public void fillGroup(){        // добавляем классы 1 - 12
+        try {
+            connection.setAutoCommit(false);
+            for(int i = 1; i <= 12; i++) {
+                addGroup(i);
+            }
+            connection.commit();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
         }
     }
     public void fillSubject(){      // добавляем предметы
-        String[] subjects = {"физика", "математика", "русский", "литература", "геометрия", "информатика"};
-        for (String subject : subjects) {
-            addSubject(subject);
+        try {
+            connection.setAutoCommit(false);
+            String[] subjects = {"физика", "математика", "русский", "литература", "геометрия", "информатика"};
+            for (String subject : subjects) {
+                addSubject(subject);
+            }
+            connection.commit();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
         }
     }
     public void fillStudent(){
@@ -86,7 +107,7 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
     public void clearTable(String table){
         try {
             Statement clearDB = connection.createStatement();
-            clearDB.executeUpdate("DELETE FROM \"" + table + "\"");
+            clearDB.executeUpdate("TRUNCATE FROM \"" + table + "\"");
         }
         catch (SQLException e){
             e.printStackTrace();
@@ -94,14 +115,12 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
     }
     public void addGroup(int group) {
         try {
-            connection.setAutoCommit(false);
             PreparedStatement addGroup = connection.prepareStatement(           // ставляем только если раньше не было
                     "INSERT INTO \"group\" (number) VALUES (?)"
             );
 
             addGroup.setInt(1, group);
             addGroup.execute();
-            connection.commit();
         }
         catch (SQLException e){
             e.printStackTrace();
@@ -109,14 +128,12 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
     }
     public void addSubject(String subject) {
         try {
-            connection.setAutoCommit(false);
             PreparedStatement addSubject = connection.prepareStatement(           // ставляем только если раньше не было
                     "INSERT INTO subject (name) VALUES (?)"
             );
 
             addSubject.setString(1, subject);
             addSubject.execute();
-            connection.commit();
         }
         catch (SQLException e){
             e.printStackTrace();
@@ -151,16 +168,15 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
                     if (studentKeys.next()) {
                         int student_id = studentKeys.getInt(1); // Извлекаем значение первого сгенерированного ключа
                         addGrade(person, student_id); // Записываем все оценки ученика
+                        addMidGrade(person, student_id); // Записываем среднюю оценку ученика
                         connection.commit();
                     }
                 } else {
-                    System.out.println("Rollback");
                     connection.rollback();
                     // Обработка случая, когда вставка не прошла
                 }
             }
             else {
-                System.out.println("Rollback");
                 connection.rollback();
             }
 
@@ -210,4 +226,20 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
         }
     }
 
+    public void addMidGrade(Person person, int student_id){
+        try{
+            PreparedStatement addMidGrade = connection.prepareStatement(
+                    "insert into mid_grade (grade, student_id) values (?, ?)"
+            );
+
+            double grade = person.getMidGrade();
+
+            addMidGrade.setDouble(1, grade);
+            addMidGrade.setInt(2, student_id);
+            addMidGrade.execute();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 }

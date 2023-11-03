@@ -4,20 +4,30 @@ import org.example.Collection.LinkedList;
 import org.example.Collection.Node;
 import org.example.Group.DataGroup;
 import org.example.Group.Person;
+import org.example.Service.JDBCStorageService;
+import org.example.Service.StorageService;
+import org.example.model.Student;
 
 
 public class CommandPrintExcellentPersonsByOlderAge implements Command {
-    public DataGroup dataGroup;
-
-    public CommandPrintExcellentPersonsByOlderAge(DataGroup dataGroup){
-        this.dataGroup = dataGroup;
+    private final StorageService storageService;
+    public CommandPrintExcellentPersonsByOlderAge(StorageService storageService){
+        this.storageService = storageService;
     }
-
     @Override
     public void execute(String[] parameters) {
 
-        if (parameters.length != 1) {
+        if (parameters.length > 2) {
             throw new IllegalArgumentException("Не верно заданы параметры команды");
+        }
+
+        boolean fast = false;
+
+        if (parameters.length == 2 && !parameters[1].equals("fast")) {
+            throw new IllegalArgumentException("Не верно заданы параметры команды");
+        }
+        else {
+            fast = true;
         }
 
         int age = 0;
@@ -30,20 +40,15 @@ public class CommandPrintExcellentPersonsByOlderAge implements Command {
 
 
         System.out.println("Ученики отличники старше " + age + " лет:");
-        for(int i = age; i < 32; i++){
-            LinkedList<Person> persons = dataGroup.getListPersonsByKey(i); //O(1)
-            if(persons == null) continue;
 
-            Node<Person> person = persons.getHead();
-            while(person != null){                                          //O(n)
-                if(person.getData().isExcellentStudent()){
-                    System.out.print("[");
-                    person.getData().print();
-                    System.out.print("]");
-                    System.out.println();
-                }
-                person = person.getNext();
-            }
+        LinkedList<Student> students = fast ?   storageService.fast_printExcellentPersonsByOlderAge(age) :
+                                                storageService.printExcellentPersonsByOlderAge(age);
+
+        Node<Student> student = students.getHead();
+        while (student != null){
+            student.getData().print();
+            student = student.getNext();
+            System.out.println();
         }
     }
 }
