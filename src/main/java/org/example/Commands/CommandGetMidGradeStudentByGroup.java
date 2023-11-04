@@ -11,13 +11,13 @@ public class CommandGetMidGradeStudentByGroup implements Command {
     @Override
     public void execute(String[] parameters) {
 
-        if (parameters.length > 2) {
+        if (parameters.length > 2 || parameters.length < 1) {
             throw new IllegalArgumentException("Не верно заданы параметры команды");
         }
 
         boolean fast = false;
 
-        if(parameters.length == 2 || parameters.length < 1) {
+        if(parameters.length == 2) {
             if (!parameters[1].equals("fast")) {
                 throw new IllegalArgumentException("Не верно заданы параметры команды");
             } else {
