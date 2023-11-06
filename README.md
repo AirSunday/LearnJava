@@ -1,7 +1,7 @@
 # Репозиторий для Школы разработчиков Java
 **Домашнее задание 3 по теме "Реляционные базы данных"**
 
-![image](https://github.com/AirSunday/LearnJava/assets/42736248/483aa639-30e9-451a-a80f-d157305ac5f2)
+![image](https://github.com/AirSunday/LearnJava/assets/42736248/0824dcd5-1632-4fc5-a060-cad2feb4b0e7)
 
 **Задание:**
 Реализовать хранение данных об успеваемости учеников в базе данных.
