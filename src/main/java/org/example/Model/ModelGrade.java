@@ -1,4 +1,4 @@
-package org.example.model;
+package org.example.Model;
 
 import org.example.DTO.DtoGrade;
 

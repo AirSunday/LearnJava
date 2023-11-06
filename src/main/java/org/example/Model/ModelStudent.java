@@ -1,8 +1,10 @@
-package org.example.model;
+package org.example.Model;
 
-import org.example.DTO.DtoStudentFast;
+import org.example.DTO.DtoStudent;
 
-public class ModelStudentFast {                           // Класс для представления Ученика
+import java.text.DecimalFormat;
+
+public class ModelStudent {                           // Класс для представления Ученика
 
     private String name;
     private String family;
@@ -10,7 +12,7 @@ public class ModelStudentFast {                           // Класс для �
     private Integer group;
     private Double midGrade;
 
-    public ModelStudentFast(String name, String family, Integer age, Integer group, Double midGrade){
+    public ModelStudent(String name, String family, Integer age, Integer group, Double midGrade){
         this.name = name;
         this.family = family;
         this.age = age;
@@ -18,12 +20,12 @@ public class ModelStudentFast {                           // Класс для �
         this.midGrade = midGrade;
     }
 
-    public ModelStudentFast(DtoStudentFast dtoStudent){
+    public ModelStudent(DtoStudent dtoStudent){
         this.name = dtoStudent.getName();
         this.family = dtoStudent.getFamily();
         this.age = dtoStudent.getAge();
         this.group = dtoStudent.getGroup();
-        this.midGrade = dtoStudent.getMidGrades();
+        this.midGrade = dtoStudent.getMidGrade();
     }
     public String getName(){ return name; }
     public String getFamily(){
@@ -36,17 +38,16 @@ public class ModelStudentFast {                           // Класс для �
         return group;
     }
 
-    public Double getMidGrade() {
+    public double getMidGrade() {
         return midGrade;
     }
 
     public void print(){
-        System.out.print(family + " " +
-                name + "; age: " +
-                age + "; group: " +
-                group + "; mid grade: " +
-                midGrade);
+        DecimalFormat df = new DecimalFormat("#.###");
+        System.out.print(family + " " + name +
+                        "; age: " + age +
+                        "; group: " + group +
+                        "; mid grade: " + df.format(midGrade));
     }
-
 }
 

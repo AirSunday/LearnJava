@@ -1,0 +1,93 @@
+---
+openapi: 3.0.0
+info:
+  title: Learn Java Student API
+  description: Swagger from Learn Java (Student Service)
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/DOM2564/LearnJavaStudents/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /group/{groupNumber}:
+    get:
+      tags:
+      - group
+      summary: Get list students by group number
+      description: Returns a list of students from the same group and their grades
+      operationId: getStudentsByGroup
+      parameters:
+      - name: groupNumber
+        in: path
+        description: Group number
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/group'
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Group not found
+  /grade:
+    put:
+      tags:
+      - grade
+      summary: Update student's grade
+      description: "Update a student's grade by specifying the student's name, family, group, and subject."
+      operationId: updateStudentGrade
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/grade_body'
+        required: true
+      responses:
+        "200":
+          description: Successful update
+        "400":
+          description: Invalid data supplied
+        "404":
+          description: Student not found
+components:
+  schemas:
+    group:
+      type: object
+      properties:
+        groupName:
+          type: integer
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/student'
+    student:
+      type: object
+      properties:
+        name:
+          type: string
+        family:
+          type: string
+        age:
+          type: integer
+        midGrade:
+          type: number
+    grade_body:
+      type: object
+      properties:
+        name:
+          type: string
+        family:
+          type: string
+        group:
+          type: integer
+        subject:
+          type: string
+        newGrade:
+          type: number
