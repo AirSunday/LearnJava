@@ -1,8 +1,5 @@
 package org.example.model;
 
-import org.example.Collection.LinkedList;
-import org.example.Collection.Node;
-import org.example.DTO.DtoGrade;
 import org.example.DTO.DtoStudent;
 
 import java.text.DecimalFormat;
@@ -13,14 +10,14 @@ public class ModelStudent {                           // Класс для пр�
     private String family;
     private Integer age;
     private Integer group;
-    private LinkedList<ModelGrade> grades;
+    private Double midGrade;
 
-    public ModelStudent(String name, String family, Integer age, Integer group, LinkedList<ModelGrade> grades){
+    public ModelStudent(String name, String family, Integer age, Integer group, Double midGrade){
         this.name = name;
         this.family = family;
         this.age = age;
         this.group = group;
-        this.grades = grades;
+        this.midGrade = midGrade;
     }
 
     public ModelStudent(DtoStudent dtoStudent){
@@ -28,13 +25,7 @@ public class ModelStudent {                           // Класс для пр�
         this.family = dtoStudent.getFamily();
         this.age = dtoStudent.getAge();
         this.group = dtoStudent.getGroup();
-        this.grades = new LinkedList<>();
-
-        Node<DtoGrade> dtoGradeNode = dtoStudent.getGrades().getHead();
-        while(dtoGradeNode != null){
-            this.grades.add(new ModelGrade(dtoGradeNode.getData()));
-            dtoGradeNode = dtoGradeNode.getNext();
-        }
+        this.midGrade = dtoStudent.getMidGrade();
     }
     public String getName(){ return name; }
     public String getFamily(){
@@ -47,31 +38,16 @@ public class ModelStudent {                           // Класс для пр�
         return group;
     }
 
-    public LinkedList<ModelGrade> getGrades() {
-        return grades;
+    public double getMidGrade() {
+        return midGrade;
     }
 
     public void print(){
-        System.out.print(family + " " +
-                         name + "; age: " +
-                         age + "; group: " +
-                         group + "; mid grade: " +
-                         getMidGrade());
-    }
-
-    public Double getMidGrade(){
-        Node<ModelGrade> grade = grades.getHead();
-
-        double sum = 0;
-        while (grade != null){
-            sum += grade.getData().getGrade();
-            grade = grade.getNext();
-        }
-
         DecimalFormat df = new DecimalFormat("#.###");
-        String formattedValue = df.format(sum / grades.size());
-        return Double.parseDouble(formattedValue.replace(',', '.'));
+        System.out.print(family + " " + name +
+                        "; age: " + age +
+                        "; group: " + group +
+                        "; mid grade: " + df.format(midGrade));
     }
-
 }
 

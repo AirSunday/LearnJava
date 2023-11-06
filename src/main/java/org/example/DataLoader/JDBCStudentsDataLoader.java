@@ -98,9 +98,9 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
                     grades.add(new ModelGrade("геометрия", geometry));
                     grades.add(new ModelGrade("информатика", informatics));
 
-                    ModelStudent student = new ModelStudent(name, family, age, group, grades);
+                    ModelStudent student = new ModelStudent(name, family, age, group, 0.0);
 
-                    addStudent(student);
+                    addStudent(student, grades);
 
                 } else {
                     System.out.println("Ошибка в записи: Недостаточно столбцов.");
@@ -147,7 +147,7 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
             e.printStackTrace();
         }
     }
-    public void addStudent(ModelStudent student) {
+    public void addStudent(ModelStudent student, LinkedList<ModelGrade> grades) {
         try {
             connection.setAutoCommit(false);
             PreparedStatement findGroupId = connection.prepareStatement(
@@ -175,8 +175,7 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
                     ResultSet studentKeys = addStudent.getGeneratedKeys();
                     if (studentKeys.next()) {
                         int student_id = studentKeys.getInt(1); // Извлекаем значение первого сгенерированного ключа
-                        addGrade(student, student_id); // Записываем все оценки ученика
-                        addMidGrade(student, student_id); // Записываем среднюю оценку ученика
+                        addGrade(student_id, grades); // Записываем все оценки ученика
                         connection.commit();
                     }
                 } else {
@@ -193,7 +192,7 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
             e.printStackTrace();
         }
     }
-    public void addGrade(ModelStudent student, int student_id) {
+    public void addGrade(int student_id, LinkedList<ModelGrade> grades) {
         try{
             PreparedStatement findSubjectIdByName = connection.prepareStatement(
                     "select id from subject where name = (?)"
@@ -202,7 +201,7 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
                     "insert into grade (grade, subject_id, student_id) values (?, ?, ?)"
             );
 
-            Node<ModelGrade> modelGradeNode = student.getGrades().getHead();
+            Node<ModelGrade> modelGradeNode = grades.getHead();
 
             while (modelGradeNode != null){
 
@@ -225,22 +224,6 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
 
             addGrade.executeBatch();
 
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-    public void addMidGrade(ModelStudent student, int student_id){
-        try{
-            PreparedStatement addMidGrade = connection.prepareStatement(
-                    "insert into mid_grade (grade, student_id) values (?, ?)"
-            );
-
-            double grade = student.getMidGrade();
-
-            addMidGrade.setDouble(1, grade);
-            addMidGrade.setInt(2, student_id);
-            addMidGrade.execute();
         }
         catch (SQLException e){
             e.printStackTrace();

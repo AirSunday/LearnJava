@@ -2,10 +2,8 @@ package org.example.Service;
 
 import org.example.Collection.LinkedList;
 import org.example.DTO.DtoStudent;
-import org.example.DTO.DtoStudentFast;
 import org.example.DataLoader.JDBCStudentsDataLoader;
 import org.example.model.ModelStudent;
-import org.example.model.ModelStudentFast;
 
 import java.sql.*;
 import java.text.DecimalFormat;
@@ -17,28 +15,16 @@ public class JDBCStorageService implements StorageService {
         JDBCStorageService.TransactionScript.getInstance().fillDB();
     }
     @Override
-    public LinkedList<ModelStudent> getStudentsByGroup(int group){
-        return JDBCStorageService.TransactionScript.getInstance().getStudentsByGroup(group);
+    public Double getMidGradeByGroup(int group){
+        return JDBCStorageService.TransactionScript.getInstance().getMidGradeByGroup(group);
     }
     @Override
-    public LinkedList<ModelStudent> getPersonsByOlderAge(int age){
-        return JDBCStorageService.TransactionScript.getInstance().getPersonsByOlderAge(age);
+    public LinkedList<ModelStudent> getExecellentPersonByOlderAge(int age){
+        return JDBCStorageService.TransactionScript.getInstance().getExecellentPersonByOlderAge(age);
     }
     @Override
     public LinkedList<ModelStudent> getPersonByFamily(String family){
         return JDBCStorageService.TransactionScript.getInstance().getPersonByFamily(family);
-    }
-    @Override
-    public LinkedList<ModelStudentFast> fast_getStudentsByGroup(int group){
-        return JDBCStorageService.TransactionScript.getInstance().fast_getStudentsByGroup(group);
-    }
-    @Override
-    public LinkedList<ModelStudentFast> fast_getPersonsByOlderAge(int age){
-        return JDBCStorageService.TransactionScript.getInstance().fast_getPersonsByOlderAge(age);
-    }
-    @Override
-    public LinkedList<ModelStudentFast> fast_getPersonByFamily(String family){
-        return JDBCStorageService.TransactionScript.getInstance().fast_getPersonByFamily(family);
     }
 
     public static final class TransactionScript {
@@ -67,99 +53,84 @@ public class JDBCStorageService implements StorageService {
             JDBCStudentsDataLoader.fillDB();
         }
 
-        public LinkedList<ModelStudent> getStudentsByGroup(int group) {
-            return getPerson("select * from student s \n" +
-                    "inner join \"group\" g on s.group_id = g.id \n" +
-                    "where g.number = " + group);
+        public Double getMidGradeByGroup(int group) {
+            try {
+                PreparedStatement midGradeByGroup = connection.prepareStatement(
+                        "SELECT \n" +
+                                "G.number,\n" +
+                                "AVG(GR.grade) AS avg_grade\n" +
+                                    "FROM student S\n" +
+                                        "JOIN \"group\" G ON S.group_id = G.id\n" +
+                                        "JOIN grade GR ON S.id = GR.student_id\n" +
+                                            "WHERE G.number = " + group + "\n" +
+                                            "GROUP BY G.number"
+                );
+
+                try(ResultSet resultSet = midGradeByGroup.executeQuery();){
+                    if (resultSet.next()) {
+                        Double grade = resultSet.getDouble("avg_grade");
+                        DecimalFormat df = new DecimalFormat("#.###");
+                        String formattedValue = df.format(grade);
+                        return Double.parseDouble(formattedValue.replace(',', '.'));
+                    }
+                }
+                return 0.0;
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
-        public LinkedList<ModelStudent> getPersonsByOlderAge(int age) {
-            return getPerson("select * from student s \n" +
-                                        "inner join \"group\" g on s.group_id = g.id \n" +
-                                        "where s.age >= " + age);
+        public LinkedList<ModelStudent> getExecellentPersonByOlderAge(int age) {
+            return getPerson("SELECT \n" +
+                                        "S.id AS student_id, \n" +
+                                        "S.name, \n" +
+                                        "S.family, \n" +
+                                        "S.age, \n" +
+                                        "G.number,\n" +
+                                        "AVG(GR.grade) AS avg_grade\n" +
+                                            "FROM student S\n" +
+                                                "JOIN \"group\" G ON S.group_id = G.id\n" +
+                                                "JOIN grade GR ON S.id = GR.student_id\n" +
+                                                    "WHERE S.age > " + age + "\n" +
+                                                    "GROUP BY S.id, G.number\n" +
+                                                    "HAVING AVG(GR.grade) = 5\n");
         }
 
         public LinkedList<ModelStudent> getPersonByFamily(String family){
-            return getPerson("select * from student s \n" +
-                                        "inner join \"group\" g on s.group_id = g.id \n" +
-                                        "where s.family LIKE  \'" + family + "%\'");
-        }
-
-        public LinkedList<ModelStudentFast> fast_getStudentsByGroup(int group){
-
-            return fast_getPerson("select * from student s \n" +
-                                                "inner join \"group\" g on s.group_id = g.id \n" +
-                                                "inner join mid_grade mg on mg.student_id = s.id \n" +
-                                                "where g.number = " + group);
-        }
-
-        public LinkedList<ModelStudentFast> fast_getPersonsByOlderAge(int age) {
-            return fast_getPerson("select * from student s \n" +
-                                                "inner join \"group\" g on s.group_id = g.id \n" +
-                                                "inner join mid_grade mg on mg.student_id = s.id \n" +
-                                                "where s.age >= " + age + "\n" +
-                                                "and mg.grade = 5");
-        }
-
-        public LinkedList<ModelStudentFast> fast_getPersonByFamily(String family){
-            return fast_getPerson("select * from student s \n" +
-                    "inner join \"group\" g on s.group_id = g.id \n" +
-                    "inner join mid_grade mg on mg.student_id = s.id \n" +
-                    "where s.family LIKE  \'" + family + "%\'");
+            return getPerson("SELECT \n" +
+                                        "S.id AS student_id, \n" +
+                                        "S.name, \n" +
+                                        "S.family, \n" +
+                                        "S.age, \n" +
+                                        "G.number,\n" +
+                                        "AVG(GR.grade) AS avg_grade\n" +
+                                            "FROM student S\n" +
+                                                "JOIN \"group\" G ON S.group_id = G.id\n" +
+                                                "JOIN grade GR ON S.id = GR.student_id\n" +
+                                                    "WHERE S.family LIKE '" + family + "%'\n" +
+                                                    "GROUP BY S.id, G.number");
         }
 
         private LinkedList<ModelStudent> getPerson(String searchLine){
             try {
-                connection.setAutoCommit(false);
-
                 LinkedList<ModelStudent> students = new LinkedList<>();
 
                 PreparedStatement studentsByGroup = connection.prepareStatement(searchLine);
 
                 try(ResultSet resultSet = studentsByGroup.executeQuery();){
                     while (resultSet.next()) {      //Рассмотрим каждого студента отдельно
-                        DtoStudent student = new DtoStudent(connection,
-                                resultSet.getInt("id"),
-                                resultSet.getString("name"),
-                                resultSet.getString("family"),
-                                resultSet.getInt("age"),
-                                resultSet.getInt("number"));
-
-                        students.add(new ModelStudent(student));
-                    }
-                }
-                connection.commit();
-                return students;
-            }
-            catch (SQLException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-        }
-
-        private LinkedList<ModelStudentFast> fast_getPerson(String searchLine){
-            try {
-                connection.setAutoCommit(false);
-
-                LinkedList<ModelStudentFast> students = new LinkedList<>();
-
-                PreparedStatement studentsByGroup = connection.prepareStatement(searchLine);
-
-                try(ResultSet resultSet = studentsByGroup.executeQuery();){
-                    while (resultSet.next()) {      //Рассмотрим каждого студента отдельно
-                        DtoStudentFast student = new DtoStudentFast(connection,
-                                resultSet.getInt("id"),
+                        DtoStudent student = new DtoStudent(
                                 resultSet.getString("name"),
                                 resultSet.getString("family"),
                                 resultSet.getInt("age"),
                                 resultSet.getInt("number"),
-                                resultSet.getDouble("grade"));
+                                resultSet.getDouble("avg_grade"));
 
-                        students.add(new ModelStudentFast(student));
+                        students.add(new ModelStudent(student));
                     }
                 }
-                connection.commit();
                 return students;
             }
             catch (SQLException e) {
@@ -168,5 +139,6 @@ public class JDBCStorageService implements StorageService {
             }
 
         }
+
     }
 }
