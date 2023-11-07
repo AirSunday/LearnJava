@@ -7,7 +7,8 @@ public class DtoStudent {                           // Класс для пре�
     private Integer age;
     private Integer group;
     private Double midGrade;
-
+    public DtoStudent(){
+    }
     public DtoStudent(String name, String family, Integer age, Integer group, Double midGrade){
         this.name = name;
         this.family = family;

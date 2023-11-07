@@ -2,12 +2,16 @@ package org.example.DTO;
 
 import org.example.Collection.LinkedList;
 
+import java.util.ArrayList;
+
 public class DtoGroup {
     private int number;
-    private LinkedList<DtoStudent> students;
+    private ArrayList<DtoStudent> students;
+    public DtoGroup() {
+    }
     public DtoGroup(int number){
         this.number = number;
-        this.students = new LinkedList<>();
+        this.students = new ArrayList<>();
     }
     public void add(DtoStudent student){
         this.students.add(student);
@@ -15,7 +19,7 @@ public class DtoGroup {
     public int getNumber(){
         return number;
     }
-    public LinkedList<DtoStudent> getStudents(){
+    public ArrayList<DtoStudent> getStudents(){
         return students;
     }
 }

@@ -1,7 +1,10 @@
 package org.example.Collection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class LinkedList<T> {
     private Node<T> head;
+    @JsonIgnore
     private Node<T> tail;
     private int size;
 

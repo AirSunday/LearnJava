@@ -2,6 +2,7 @@ package org.example.Service;
 
 
 import org.example.Collection.LinkedList;
+import org.example.DTO.DtoGrade;
 import org.example.DTO.DtoGroup;
 import org.example.Model.ModelStudent;
 
@@ -22,6 +23,10 @@ public class BaseStudentService implements StudentService {
     @Override
     public DtoGroup getStudentsByGroup(int group, int page){
         return storageService.getStudentsByGroup(group, page);
+    }
+    @Override
+    public boolean updateGradeByStudent(DtoGrade dtoGrade){
+        return storageService.updateGradeByStudent(dtoGrade);
     }
     @Override
     public void fillDB() {

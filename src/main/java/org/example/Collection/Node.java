@@ -1,8 +1,11 @@
 package org.example.Collection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Node <T> {
     private T data;
     private Node<T> next;
+    @JsonIgnore
     private Node<T> prev;
 
     public Node(T data) {

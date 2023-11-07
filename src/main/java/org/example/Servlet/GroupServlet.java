@@ -1,6 +1,7 @@
 package org.example.Servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.DTO.DtoGrade;
 import org.example.DTO.DtoGroup;
 import org.example.Service.BaseStudentService;
 
@@ -27,17 +28,27 @@ public class GroupServlet extends HttpServlet {
         if (parts.length >= 3) {
             groupNumber = parts[1];
             page = parts[2];
-        }
+            DtoGroup group = studentService.getStudentsByGroup(Integer.parseInt(groupNumber), Integer.parseInt(page));
 
-        DtoGroup group = studentService.getStudentsByGroup(Integer.parseInt(groupNumber), Integer.parseInt(page));
-
-        try (var output = resp.getWriter()) {
-            resp.setContentType("application/json");
-            output.write(mapper.writeValueAsString(group.getStudents().getHead().getData()));
-            output.flush();
+            try (var output = resp.getWriter()) {
+                resp.setContentType("application/json");
+                output.write(mapper.writeValueAsString(group));
+                output.flush();
+            }
+            catch (Exception e){
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                try (var output = resp.getWriter()) {
+                    output.write("Group not found");
+                    output.flush();
+                }
+            }
         }
-        catch (Exception e){
-            e.printStackTrace();
+        else {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            try (var output = resp.getWriter()) {
+                output.write("Invalid data supplied");
+                output.flush();
+            }
         }
     }
 

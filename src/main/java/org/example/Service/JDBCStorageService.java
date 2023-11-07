@@ -1,6 +1,7 @@
 package org.example.Service;
 
 import org.example.Collection.LinkedList;
+import org.example.DTO.DtoGrade;
 import org.example.DTO.DtoGroup;
 import org.example.DTO.DtoStudent;
 import org.example.DataLoader.JDBCStudentsDataLoader;
@@ -30,6 +31,10 @@ public class JDBCStorageService implements StorageService {
     @Override
     public DtoGroup getStudentsByGroup(int group, int page){
         return JDBCStorageService.TransactionScript.getInstance().getStudentsByGroup(group, page);
+    }
+    @Override
+    public boolean updateGradeByStudent(DtoGrade dtoGrade){
+        return JDBCStorageService.TransactionScript.getInstance().updateGradeByStudent(dtoGrade);
     }
 
     public static final class TransactionScript {
@@ -184,6 +189,52 @@ public class JDBCStorageService implements StorageService {
             catch (SQLException e) {
                 e.printStackTrace();
                 return null;
+            }
+        }
+
+        public boolean updateGradeByStudent(DtoGrade dtoGrade){
+            try {
+                connection.setAutoCommit(false);
+                String nameStudent = dtoGrade.getStudent().getName();
+                String familyStudent = dtoGrade.getStudent().getFamily();
+                int groupStudent = dtoGrade.getStudent().getGroup();
+                double newGrade = dtoGrade.getGrade();
+                String subject = dtoGrade.getSubject();
+
+                PreparedStatement getGradeId = connection.prepareStatement(
+                        "SELECT grade.id\n" +
+                                "FROM student S\n" +
+                                    "JOIN grade ON grade.student_id = S.id\n" +
+                                    "JOIN subject SU ON SU.id = grade.subject_id\n" +
+                                    "JOIN \"group\" Gr ON Gr.id = S.group_id\n" +
+                                        "WHERE\n" +
+                                        "S.name = '" + nameStudent + "'\n" +
+                                        "AND S.family = '" + familyStudent + "'\n" +
+                                        "AND Gr.number = " + groupStudent + "\n" +
+                                        "AND SU.name = '" + subject + "'"
+                );
+
+                PreparedStatement updateGradeById = connection.prepareStatement(
+                            "UPDATE grade \n" +
+                                "Set grade = " + newGrade + "\n" +
+                                "where id = ?"
+                );
+
+                try(ResultSet resultSet = getGradeId.executeQuery();){
+                    if (resultSet.next()) {
+                        updateGradeById.setInt(1, resultSet.getInt("id"));
+                        updateGradeById.execute();
+                        connection.commit();
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return false;
             }
         }
     }
