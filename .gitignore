@@ -6,6 +6,8 @@
 .mvn
 target/
 log/
+mvnw
+mvnw.cmd
 
 # IDEs and editors
 .idea
