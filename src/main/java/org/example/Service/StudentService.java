@@ -31,6 +31,7 @@ public class StudentService {
         student.setFamily(req.getFamily());
         student.setAge(req.getAge());
         student.setGroup(group);
+        student.setMidGrade();
 
         studentRepository.save(student);
 

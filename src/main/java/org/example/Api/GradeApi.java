@@ -26,7 +26,7 @@ public class GradeApi {
 
     private final GradeService gradeService;
 
-    @Tag(name = "Create", description = "Create entity")
+    @Tag(name = "HomeWork", description = "Requests for tasks from homework")
     @Operation(
             summary = "Create grade or update",
             description = "Create grade by student and subject (or update)"
