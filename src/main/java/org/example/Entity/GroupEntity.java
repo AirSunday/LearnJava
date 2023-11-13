@@ -19,7 +19,7 @@ public class GroupEntity {
 
     private Integer number;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StudentEntity> students;
 
 }

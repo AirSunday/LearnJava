@@ -38,13 +38,20 @@ public class GroupService {
     public List<StudentEntity> getListStudentByGroup(int groupNumber, int offset, int count){
         GroupEntity group = groupRepository.search(groupNumber);
 
-        if(group == null){
+        List<StudentEntity> allStudents = group.getStudents();
+
+        if(group == null || allStudents.size() == 0){
             throw new RuntimeException("Группы не существует");
         }
 
-        Pageable pageable = PageRequest.of(offset-1, count);
-        List<StudentEntity> students = studentRepository.searchByNumber(group, pageable);
+//        Pageable pageable = PageRequest.of(offset-1, count);
+//        List<StudentEntity> students = studentRepository.searchByNumber(group, pageable);
 
-        return students;
+        int fromIndex = (offset - 1) * count;
+        int toIndex = Math.min(fromIndex + count, allStudents.size());
+
+        List<StudentEntity> paginatedStudents = allStudents.subList(fromIndex, toIndex);
+
+        return paginatedStudents;
     }
 }
