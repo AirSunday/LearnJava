@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.Dto.GroupSaveReq;
 import org.example.Dto.ListResponse;
 import org.example.Dto.SimpleResponse;
-import org.example.Entity.StudentEntity;
+import org.example.Dto.StudentMidGradeRes;
 import org.example.Service.GroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +41,10 @@ public class GroupApi {
             return ResponseEntity.ok(new SimpleResponse<>(result));
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            SimpleResponse<Long> errorResponse = new SimpleResponse<>();
+            errorResponse.setError(true);
+            errorResponse.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 
@@ -54,12 +57,12 @@ public class GroupApi {
             @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = ListResponse.class), mediaType = "application/json") }),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
     })
-    @GetMapping("/{group}/{offset}/{count}")
-    public ResponseEntity<ListResponse<StudentEntity>> getListStudentByGroup(
+    @GetMapping("/{number}/{offset}/{count}")
+    public ResponseEntity<ListResponse<StudentMidGradeRes>> getListStudentByGroup(
                  @PathVariable
                  @Parameter(description = "Group number", required = true)
                  @Min(1)
-                     int group,
+                     int number,
                  @PathVariable
                  @Parameter(description = "Number page",required = true)
                  @Min(1)
@@ -70,11 +73,14 @@ public class GroupApi {
                      int count
     ){
         try{
-            var result = groupService.getListStudentByGroup(group, offset, count);
-            return ResponseEntity.ok(new ListResponse<>(result));
+            var result = groupService.getListStudentByGroup(number, offset, count);
+            return ResponseEntity.ok(result);
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            ListResponse<StudentMidGradeRes> errorResponse = new ListResponse<>();
+            errorResponse.setError(true);
+            errorResponse.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 }

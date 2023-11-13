@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.Dto.SubjectSaveReq;
 import org.example.Entity.SubjectEntity;
 import org.example.Entity.SubjectType;
+import org.example.Repository.SubjectRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;

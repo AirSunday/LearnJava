@@ -16,13 +16,12 @@ import java.util.List;
 @Table(name = "t_student")
 public class StudentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
     private String family;
     private Integer age;
-    private Double midGrade;
 
     @JsonIgnore
     @ManyToOne
@@ -33,17 +32,19 @@ public class StudentEntity {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<GradeEntity> grades;
 
-    public void setMidGrade(){
+    public Double calculateAverageGrade() {
+        if (grades == null || grades.isEmpty()) {
+            return 0.0;
+        }
+
         double sum = 0;
-        for(GradeEntity grade : grades){
+        for (GradeEntity grade : grades) {
             sum += grade.getGrade();
         }
-        if (grades.size() > 0) {
-            double average = sum / grades.size();
-            BigDecimal roundedAverage = BigDecimal.valueOf(average).setScale(3, RoundingMode.HALF_UP);
-            this.midGrade = roundedAverage.doubleValue();
-        } else {
-            this.midGrade = 0.0;
-        }
+
+        double average = sum / grades.size();
+        BigDecimal roundedAverage = BigDecimal.valueOf(average).setScale(3, RoundingMode.HALF_UP);
+
+        return roundedAverage.doubleValue();
     }
 }

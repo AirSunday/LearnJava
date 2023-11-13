@@ -28,6 +28,6 @@ public enum SubjectType {
                 return subjectType;
             }
         }
-        throw new IllegalArgumentException("No such subject type with name: " + name);
+        throw new IllegalArgumentException("Не существует предмета с именем: " + name);
     }
 }

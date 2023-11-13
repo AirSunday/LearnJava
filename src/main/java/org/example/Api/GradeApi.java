@@ -42,7 +42,10 @@ public class GradeApi {
             return ResponseEntity.ok(new SimpleResponse<>(result));
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            SimpleResponse<Long> errorResponse = new SimpleResponse<>();
+            errorResponse.setError(true);
+            errorResponse.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 }

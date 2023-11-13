@@ -1,4 +1,4 @@
-package org.example.Service;
+package org.example.Repository;
 
 import org.example.Entity.GradeEntity;
 import org.example.Entity.StudentEntity;

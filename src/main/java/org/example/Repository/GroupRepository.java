@@ -1,4 +1,4 @@
-package org.example.Service;
+package org.example.Repository;
 
 import org.example.Entity.GroupEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

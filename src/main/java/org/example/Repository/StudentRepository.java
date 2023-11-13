@@ -1,9 +1,7 @@
-package org.example.Service;
+package org.example.Repository;
 
-import org.example.Entity.GroupEntity;
 import org.example.Entity.StudentEntity;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,10 +17,10 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
                          @Param("family") String family,
                          @Param("group") Integer group  );
 
-    @Query("select s from StudentEntity s where s.group = :group " +
+    @Query("select s from StudentEntity s where s.group.number = :group " +
             "group by s.id, s.group " +
             "order by s.id")
-    List<StudentEntity> searchByNumber(@Param("group") GroupEntity group,
+    List<StudentEntity> searchByNumber(@Param("group") Integer group,
                                        Pageable pageable);
 
 }

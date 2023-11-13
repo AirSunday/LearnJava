@@ -11,7 +11,7 @@ import lombok.Setter;
 @Table(name="t_grade")
 public class GradeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Integer grade;
