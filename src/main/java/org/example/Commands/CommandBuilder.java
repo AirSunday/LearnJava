@@ -23,6 +23,9 @@ public class CommandBuilder {
     public Command buildCommandFillDB(){
         return new CommandFillDB(studentService);
     }
+    public Command buildCommandExit(){
+        return new CommandExit(studentService);
+    }
 
     public Command buildCommandHelp(){
         return new CommandHelp();
@@ -64,21 +67,14 @@ public class CommandBuilder {
             return null;
         }
 
-        switch (type) {
-            case CMD1:
-                return buildCommandPrintExcellentPersonsByOlderAge();
-            case CMD2:
-                return buildCommandGetMidGradeStudentByGroup();
-            case CMD3:
-                return buildCommandPrintPersonsByFamily();
-            case HELP:
-                return buildCommandHelp();
-            case FILLDB:
-                return buildCommandFillDB();
-            case EXIT:
-                break;
-        }
-        return null;
+        return switch (type) {
+            case CMD1 -> buildCommandPrintExcellentPersonsByOlderAge();
+            case CMD2 -> buildCommandGetMidGradeStudentByGroup();
+            case CMD3 -> buildCommandPrintPersonsByFamily();
+            case HELP -> buildCommandHelp();
+            case FILLDB -> buildCommandFillDB();
+            case EXIT -> buildCommandExit();
+        };
     }
 
     public void run(String command, String[] parameters) {

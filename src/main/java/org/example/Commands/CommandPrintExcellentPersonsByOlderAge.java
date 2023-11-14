@@ -2,8 +2,8 @@ package org.example.Commands;
 
 import org.example.Collection.LinkedList;
 import org.example.Collection.Node;
+import org.example.DTO.DtoStudent;
 import org.example.Service.StudentService;
-import org.example.model.ModelStudent;
 
 
 public class CommandPrintExcellentPersonsByOlderAge implements Command {
@@ -28,8 +28,8 @@ public class CommandPrintExcellentPersonsByOlderAge implements Command {
 
         System.out.println("Ученики отличники старше " + age + " лет:");
 
-        LinkedList<ModelStudent> students = studentService.getExcellentPersonsByOlderAge(age);
-        Node<ModelStudent> student = students.getHead();
+        LinkedList<DtoStudent> students = studentService.getExcellentPersonsByOlderAge(age);
+        Node<DtoStudent> student = students.getHead();
         while (student != null){
             student.getData().print();
             student = student.getNext();

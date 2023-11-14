@@ -2,8 +2,8 @@ package org.example.Commands;
 
 import org.example.Collection.LinkedList;
 import org.example.Collection.Node;
+import org.example.DTO.DtoStudent;
 import org.example.Service.StudentService;
-import org.example.model.ModelStudent;
 
 
 public class CommandPrintPersonsByFamily implements Command {
@@ -19,8 +19,8 @@ public class CommandPrintPersonsByFamily implements Command {
 
         String family = parameters[0];       // получили имя ученика
 
-        LinkedList<ModelStudent> students = studentService.getPersonByFamily(family);
-        Node<ModelStudent> student = students.getHead();
+        LinkedList<DtoStudent> students = studentService.getPersonByFamily(family);
+        Node<DtoStudent> student = students.getHead();
 
         if(students.size() == 1){
             System.out.print("Средняя оценка ученика: ");

@@ -2,8 +2,9 @@ package org.example.DataLoader;
 
 import org.example.Collection.LinkedList;
 import org.example.Collection.Node;
-import org.example.model.ModelGrade;
-import org.example.model.ModelStudent;
+import org.example.DTO.DtoGrade;
+import org.example.DTO.DtoStudent;
+import org.example.Service.SqlScript;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,7 +24,14 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
         fillGroup();
         fillSubject();
         fillStudent();
-    }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace(); // Обработка исключений
+            }
+        }
+        }
     public void clearDB() {         // очишаем все таблицы
         try {
             connection.setAutoCommit(false);
@@ -90,15 +98,15 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
                     int geometry = Integer.parseInt(record[8]);
                     int informatics = Integer.parseInt(record[9]);
 
-                    LinkedList<ModelGrade> grades = new LinkedList<>();
-                    grades.add(new ModelGrade("физика", physics));
-                    grades.add(new ModelGrade("математика", mathematics));
-                    grades.add(new ModelGrade("русский", rus));
-                    grades.add(new ModelGrade("литература", literature));
-                    grades.add(new ModelGrade("геометрия", geometry));
-                    grades.add(new ModelGrade("информатика", informatics));
+                    LinkedList<DtoGrade> grades = new LinkedList<>();
+                    grades.add(new DtoGrade("физика", physics));
+                    grades.add(new DtoGrade("математика", mathematics));
+                    grades.add(new DtoGrade("русский", rus));
+                    grades.add(new DtoGrade("литература", literature));
+                    grades.add(new DtoGrade("геометрия", geometry));
+                    grades.add(new DtoGrade("информатика", informatics));
 
-                    ModelStudent student = new ModelStudent(name, family, age, group, 0.0);
+                    DtoStudent student = new DtoStudent(name, family, age, group, 0.0);
 
                     addStudent(student, grades);
 
@@ -113,20 +121,24 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
         System.out.println("Закончилось чтение файла");
     }
     public void clearTable(String table){
-        try {
-            Statement clearDB = connection.createStatement();
-            clearDB.executeUpdate("TRUNCATE FROM \"" + table + "\"");
+        try (
+                PreparedStatement clearTable = connection.prepareStatement(
+                        SqlScript.TRUNCATE_TABLE
+                );
+        ){
+            clearTable.setString(1, table);
+            clearTable.execute();
         }
         catch (SQLException e){
             e.printStackTrace();
         }
     }
     public void addGroup(int group) {
-        try {
-            PreparedStatement addGroup = connection.prepareStatement(           // ставляем только если раньше не было
-                    "INSERT INTO \"group\" (number) VALUES (?)"
-            );
-
+        try(
+                PreparedStatement addGroup = connection.prepareStatement(
+                        SqlScript.INSERT_GROUP
+                );
+        ){
             addGroup.setInt(1, group);
             addGroup.execute();
         }
@@ -135,11 +147,12 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
         }
     }
     public void addSubject(String subject) {
-        try {
-            PreparedStatement addSubject = connection.prepareStatement(           // ставляем только если раньше не было
-                    "INSERT INTO subject (name) VALUES (?)"
-            );
 
+        try (
+                PreparedStatement addSubject = connection.prepareStatement(
+                        SqlScript.INSERT_SUBJECT
+                );
+        ){
             addSubject.setString(1, subject);
             addSubject.execute();
         }
@@ -147,61 +160,63 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
             e.printStackTrace();
         }
     }
-    public void addStudent(ModelStudent student, LinkedList<ModelGrade> grades) {
-        try {
+    public void addStudent(DtoStudent student, LinkedList<DtoGrade> grades) {
+        try (
+                PreparedStatement findGroupId = connection.prepareStatement(
+                        SqlScript.SELECT_ID_FROM_GROUP_BY_NUMBER
+                );
+                PreparedStatement addStudent = connection.prepareStatement(
+                        SqlScript.INSERT_STUDENT,
+                        Statement.RETURN_GENERATED_KEYS
+                );
+        ){
             connection.setAutoCommit(false);
-            PreparedStatement findGroupId = connection.prepareStatement(
-                    "select id from \"group\" where number = ?"
-            );
-            PreparedStatement addStudent = connection.prepareStatement(
-                    "insert into student (name, family, age, group_id) values (?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS
-            );
-
             findGroupId.setInt(1, student.getGroup());
-            ResultSet resultSet = findGroupId.executeQuery();
 
-            if (resultSet.next()) {
-                int group_id = resultSet.getInt("id");
+            try (
+                    ResultSet resultSet = findGroupId.executeQuery();
+            ){
+                if (resultSet.next()) {
+                    int group_id = resultSet.getInt("id");
 
-                addStudent.setString(1, student.getName());
-                addStudent.setString(2, student.getFamily());
-                addStudent.setInt(3, student.getAge());
-                addStudent.setInt(4, group_id);
+                    addStudent.setString(1, student.getName());
+                    addStudent.setString(2, student.getFamily());
+                    addStudent.setInt(3, student.getAge());
+                    addStudent.setInt(4, group_id);
 
-                int affectedRows = addStudent.executeUpdate();
+                    int affectedRows = addStudent.executeUpdate();
 
-                if (affectedRows > 0) {
-                    ResultSet studentKeys = addStudent.getGeneratedKeys();
-                    if (studentKeys.next()) {
-                        int student_id = studentKeys.getInt(1); // Извлекаем значение первого сгенерированного ключа
-                        addGrade(student_id, grades); // Записываем все оценки ученика
-                        connection.commit();
+                    if (affectedRows > 0) {
+                        ResultSet studentKeys = addStudent.getGeneratedKeys();
+                        if (studentKeys.next()) {
+                            int student_id = studentKeys.getInt(1); // Извлекаем значение первого сгенерированного ключа
+                            addGrade(student_id, grades); // Записываем все оценки ученика
+                            connection.commit();
+                        }
+                    } else {
+                        connection.rollback();
                     }
-                } else {
+                }
+                else {
                     connection.rollback();
-                    // Обработка случая, когда вставка не прошла
                 }
             }
-            else {
-                connection.rollback();
-            }
-
         }
         catch (SQLException e){
             e.printStackTrace();
         }
     }
-    public void addGrade(int student_id, LinkedList<ModelGrade> grades) {
-        try{
-            PreparedStatement findSubjectIdByName = connection.prepareStatement(
-                    "select id from subject where name = (?)"
-            );
-            PreparedStatement addGrade = connection.prepareStatement(
-                    "insert into grade (grade, subject_id, student_id) values (?, ?, ?)"
-            );
+    public void addGrade(int student_id, LinkedList<DtoGrade> grades) {
+        try(
+                PreparedStatement findSubjectIdByName = connection.prepareStatement(
+                        SqlScript.SELECT_ID_FROM_SUBJECT_BY_NAME
+                );
+                PreparedStatement addGrade = connection.prepareStatement(
+                        SqlScript.INSERT_GRADE
+                );
+        ){
 
-            Node<ModelGrade> modelGradeNode = grades.getHead();
+            Node<DtoGrade> modelGradeNode = grades.getHead();
 
             while (modelGradeNode != null){
 
@@ -209,21 +224,20 @@ public class JDBCStudentsDataLoader implements JDBCDataLoader {
                 int grade = modelGradeNode.getData().getGrade();
 
                 findSubjectIdByName.setString(1, subject);
-                ResultSet resultSet = findSubjectIdByName.executeQuery();
-                if (resultSet.next()) {
-                    int subject_id = resultSet.getInt("id");
-                    addGrade.setInt(1, grade);
-                    addGrade.setInt(2, subject_id);
-                    addGrade.setInt(3, student_id);
-                    addGrade.addBatch(); // Добавить операцию в пакет
+                try(
+                        ResultSet resultSet = findSubjectIdByName.executeQuery();
+                ){
+                    if (resultSet.next()) {
+                        int subject_id = resultSet.getInt("id");
+                        addGrade.setInt(1, grade);
+                        addGrade.setInt(2, subject_id);
+                        addGrade.setInt(3, student_id);
+                        addGrade.addBatch(); // Добавить операцию в пакет
+                    }
                 }
-                resultSet.close();
-
                 modelGradeNode = modelGradeNode.getNext();
             }
-
             addGrade.executeBatch();
-
         }
         catch (SQLException e){
             e.printStackTrace();

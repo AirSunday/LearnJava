@@ -3,7 +3,6 @@ package org.example.Service;
 import org.example.Collection.LinkedList;
 import org.example.DTO.DtoStudent;
 import org.example.DataLoader.JDBCStudentsDataLoader;
-import org.example.model.ModelStudent;
 
 import java.sql.*;
 import java.text.DecimalFormat;
@@ -11,7 +10,7 @@ import java.text.DecimalFormat;
 public class JDBCStorageService implements StorageService {
 
     @Override
-    public void fillDB(){
+    public void fillDB() {
         JDBCStorageService.TransactionScript.getInstance().fillDB();
     }
     @Override
@@ -19,12 +18,16 @@ public class JDBCStorageService implements StorageService {
         return JDBCStorageService.TransactionScript.getInstance().getMidGradeByGroup(group);
     }
     @Override
-    public LinkedList<ModelStudent> getExecellentPersonByOlderAge(int age){
-        return JDBCStorageService.TransactionScript.getInstance().getExecellentPersonByOlderAge(age);
+    public LinkedList<DtoStudent> getExcellentPersonByOlderAge(int age){
+        return JDBCStorageService.TransactionScript.getInstance().getExcellentPersonByOlderAge(age);
     }
     @Override
-    public LinkedList<ModelStudent> getPersonByFamily(String family){
+    public LinkedList<DtoStudent> getPersonByFamily(String family){
         return JDBCStorageService.TransactionScript.getInstance().getPersonByFamily(family);
+    }
+    @Override
+    public void closeConnection(){
+        JDBCStorageService.TransactionScript.getInstance().closeConnection();
     }
 
     public static final class TransactionScript {
@@ -41,11 +44,14 @@ public class JDBCStorageService implements StorageService {
         public TransactionScript()
         {
             try {
+                Class.forName("org.postgresql.Driver");
                 connection = DriverManager.getConnection(url, login, password);
             } catch (SQLException e)
             {
                 e.printStackTrace();
-            };
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         public void fillDB() {
@@ -54,17 +60,12 @@ public class JDBCStorageService implements StorageService {
         }
 
         public Double getMidGradeByGroup(int group) {
-            try {
-                PreparedStatement midGradeByGroup = connection.prepareStatement(
-                        "SELECT \n" +
-                                "G.number,\n" +
-                                "AVG(GR.grade) AS avg_grade\n" +
-                                    "FROM student S\n" +
-                                        "JOIN \"group\" G ON S.group_id = G.id\n" +
-                                        "JOIN grade GR ON S.id = GR.student_id\n" +
-                                            "WHERE G.number = " + group + "\n" +
-                                            "GROUP BY G.number"
-                );
+            try(
+                    PreparedStatement midGradeByGroup = connection.prepareStatement(
+                        SqlScript.SELECT_MID_GRADE_FROM_STUDENT_BY_GROUP
+                    )
+            ) {
+                midGradeByGroup.setInt(1, group);
 
                 try(ResultSet resultSet = midGradeByGroup.executeQuery();){
                     if (resultSet.next()) {
@@ -74,6 +75,7 @@ public class JDBCStorageService implements StorageService {
                         return Double.parseDouble(formattedValue.replace(',', '.'));
                     }
                 }
+
                 return 0.0;
             }
             catch (SQLException e) {
@@ -82,53 +84,49 @@ public class JDBCStorageService implements StorageService {
             }
         }
 
-        public LinkedList<ModelStudent> getExecellentPersonByOlderAge(int age) {
-            return getPerson("SELECT \n" +
-                                        "S.id AS student_id, \n" +
-                                        "S.name, \n" +
-                                        "S.family, \n" +
-                                        "S.age, \n" +
-                                        "G.number,\n" +
-                                        "AVG(GR.grade) AS avg_grade\n" +
-                                            "FROM student S\n" +
-                                                "JOIN \"group\" G ON S.group_id = G.id\n" +
-                                                "JOIN grade GR ON S.id = GR.student_id\n" +
-                                                    "WHERE S.age > " + age + "\n" +
-                                                    "GROUP BY S.id, G.number\n" +
-                                                    "HAVING AVG(GR.grade) = 5\n");
+        public LinkedList<DtoStudent> getExcellentPersonByOlderAge(int age) {
+            try (
+                    PreparedStatement studentStatement = connection.prepareStatement(
+                            SqlScript.SELECT_STUDENT_INFO_FROM_STUDENT_BY_AGE
+                    );
+            ){
+                studentStatement.setInt(1, age);
+                return getPerson(studentStatement);
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
-        public LinkedList<ModelStudent> getPersonByFamily(String family){
-            return getPerson("SELECT \n" +
-                                        "S.id AS student_id, \n" +
-                                        "S.name, \n" +
-                                        "S.family, \n" +
-                                        "S.age, \n" +
-                                        "G.number,\n" +
-                                        "AVG(GR.grade) AS avg_grade\n" +
-                                            "FROM student S\n" +
-                                                "JOIN \"group\" G ON S.group_id = G.id\n" +
-                                                "JOIN grade GR ON S.id = GR.student_id\n" +
-                                                    "WHERE S.family LIKE '" + family + "%'\n" +
-                                                    "GROUP BY S.id, G.number");
+        public LinkedList<DtoStudent> getPersonByFamily(String family){
+            try (
+                    PreparedStatement studentStatement = connection.prepareStatement(
+                            SqlScript.SELECT_STUDENT_INFO_FROM_STUDENT_BY_FAMILY
+                    );
+            ) {
+
+                studentStatement.setString(1, family);
+                return getPerson(studentStatement);
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
-        private LinkedList<ModelStudent> getPerson(String searchLine){
+        private LinkedList<DtoStudent> getPerson(PreparedStatement studentStatement){
             try {
-                LinkedList<ModelStudent> students = new LinkedList<>();
+                LinkedList<DtoStudent> students = new LinkedList<>();
 
-                PreparedStatement studentsByGroup = connection.prepareStatement(searchLine);
-
-                try(ResultSet resultSet = studentsByGroup.executeQuery();){
-                    while (resultSet.next()) {      //Рассмотрим каждого студента отдельно
-                        DtoStudent student = new DtoStudent(
+                try(ResultSet resultSet = studentStatement.executeQuery();){
+                    while (resultSet.next()) {
+                        students.add(new DtoStudent(
                                 resultSet.getString("name"),
                                 resultSet.getString("family"),
                                 resultSet.getInt("age"),
                                 resultSet.getInt("number"),
-                                resultSet.getDouble("avg_grade"));
-
-                        students.add(new ModelStudent(student));
+                                resultSet.getDouble("avg_grade")));
                     }
                 }
                 return students;
@@ -138,6 +136,16 @@ public class JDBCStorageService implements StorageService {
                 return null;
             }
 
+        }
+
+        void closeConnection(){
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
     }

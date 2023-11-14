@@ -1,5 +1,7 @@
 package org.example.DTO;
 
+import java.text.DecimalFormat;
+
 public class DtoStudent {                           // Класс для представления Ученика
 
     private String name;
@@ -29,6 +31,14 @@ public class DtoStudent {                           // Класс для пре�
 
     public Double getMidGrade() {
         return midGrade;
+    }
+
+    public void print(){
+        DecimalFormat df = new DecimalFormat("#.###");
+        System.out.print(family + " " + name +
+                "; age: " + age +
+                "; group: " + group +
+                "; mid grade: " + df.format(midGrade));
     }
 }
 

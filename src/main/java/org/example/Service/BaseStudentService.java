@@ -1,31 +1,29 @@
 package org.example.Service;
 
-
 import org.example.Collection.LinkedList;
-import org.example.model.ModelStudent;
+import org.example.DTO.DtoStudent;
 
 public class BaseStudentService implements StudentService {
+
+    JDBCStorageService storageService = new JDBCStorageService();
     @Override
     public Double getMidGradeStudentsByGroup(int group){
-        JDBCStorageService storageService = new JDBCStorageService();
-
         return storageService.getMidGradeByGroup(group);
     }
     @Override
-    public LinkedList<ModelStudent> getExcellentPersonsByOlderAge(int age){
-        JDBCStorageService storageService = new JDBCStorageService();
-
-        return storageService.getExecellentPersonByOlderAge(age);
+    public LinkedList<DtoStudent> getExcellentPersonsByOlderAge(int age){
+        return storageService.getExcellentPersonByOlderAge(age);
     }
     @Override
-    public LinkedList<ModelStudent> getPersonByFamily(String family){
-        JDBCStorageService storageService = new JDBCStorageService();
-
+    public LinkedList<DtoStudent> getPersonByFamily(String family){
         return storageService.getPersonByFamily(family);
     }
     @Override
     public void fillDB() {
-        JDBCStorageService storageService = new JDBCStorageService();
         storageService.fillDB();
+    }
+    @Override
+    public void closeConnection(){
+        storageService.closeConnection();
     }
 }
