@@ -8,5 +8,4 @@ public interface StorageService {
     Double getMidGradeByGroup(int group);
     LinkedList<DtoStudent> getExcellentPersonByOlderAge(int age);
     LinkedList<DtoStudent> getPersonByFamily(String family);
-    void closeConnection();
 }

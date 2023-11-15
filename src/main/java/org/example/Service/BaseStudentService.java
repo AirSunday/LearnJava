@@ -22,8 +22,4 @@ public class BaseStudentService implements StudentService {
     public void fillDB() {
         storageService.fillDB();
     }
-    @Override
-    public void closeConnection(){
-        storageService.closeConnection();
-    }
 }

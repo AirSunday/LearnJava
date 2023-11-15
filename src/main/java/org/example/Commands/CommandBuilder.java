@@ -24,7 +24,7 @@ public class CommandBuilder {
         return new CommandFillDB(studentService);
     }
     public Command buildCommandExit(){
-        return new CommandExit(studentService);
+        return new CommandExit();
     }
 
     public Command buildCommandHelp(){

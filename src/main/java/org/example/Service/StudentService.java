@@ -8,5 +8,4 @@ public interface StudentService {
     LinkedList<DtoStudent> getExcellentPersonsByOlderAge(int age);
     LinkedList<DtoStudent> getPersonByFamily(String family);
     void fillDB();
-    void closeConnection();
 }

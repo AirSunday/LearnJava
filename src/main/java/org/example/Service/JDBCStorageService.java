@@ -25,19 +25,16 @@ public class JDBCStorageService implements StorageService {
     public LinkedList<DtoStudent> getPersonByFamily(String family){
         return JDBCStorageService.TransactionScript.getInstance().getPersonByFamily(family);
     }
-    @Override
-    public void closeConnection(){
-        JDBCStorageService.TransactionScript.getInstance().closeConnection();
-    }
 
     public static final class TransactionScript {
         private final String url      = "jdbc:postgresql://localhost:5432/LearnJava";
         private final String login    = "postgres";
         private final String password = "123";
         private Connection connection;
-        private static final TransactionScript instance = new TransactionScript();
+        private static TransactionScript instance;
 
         public static TransactionScript getInstance() {
+            instance = new TransactionScript();
             return instance;
         }
 
@@ -82,6 +79,9 @@ public class JDBCStorageService implements StorageService {
                 e.printStackTrace();
                 return null;
             }
+            finally {
+                closeConnection();
+            }
         }
 
         public LinkedList<DtoStudent> getExcellentPersonByOlderAge(int age) {
@@ -96,6 +96,9 @@ public class JDBCStorageService implements StorageService {
             catch (SQLException e) {
                 e.printStackTrace();
                 return null;
+            }
+            finally {
+                closeConnection();
             }
         }
 
@@ -112,6 +115,9 @@ public class JDBCStorageService implements StorageService {
             catch (SQLException e) {
                 e.printStackTrace();
                 return null;
+            }
+            finally {
+                closeConnection();
             }
         }
 
