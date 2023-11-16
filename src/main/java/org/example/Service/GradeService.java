@@ -2,8 +2,9 @@ package org.example.Service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.Dto.GradeSaveReq;
+import org.example.Dto.GradeDto;
 import org.example.Entity.*;
+import org.example.Exception.NotFoundException;
 import org.example.Repository.GradeRepository;
 import org.example.Repository.StudentRepository;
 import org.example.Repository.SubjectRepository;
@@ -21,40 +22,42 @@ public class GradeService {
     private final SubjectRepository subjectRepository;
     private final StudentRepository studentRepository;
 
-    public Long save(@Valid GradeSaveReq req) {
-        StudentEntity student = studentRepository.search(
-                req.getNameStudent(),
-                req.getFamilyStudent(),
-                req.getGroupStudent()
+    public String save(@Valid GradeDto gradeDto) throws NotFoundException {
+        StudentEntity student = studentRepository.findByNameAndFamilyAndGroup_Number(
+                gradeDto.getNameStudent(),
+                gradeDto.getFamilyStudent(),
+                gradeDto.getGroupStudent()
         );
 
         if(student == null){
-            throw new RuntimeException("Студент не найден");
+            throw new NotFoundException("Студент не найден");
         }
 
-        SubjectType subjectType = SubjectType.fromName(req.getSubject());
-        SubjectEntity subject = subjectRepository.search(subjectType);
+        SubjectEntity subject = subjectRepository.findByName(gradeDto.getSubject());
 
         if(subject == null){
-            throw new RuntimeException("Предмет не найден");
+            throw new NotFoundException("Предмет не найден");
         }
 
-        GradeEntity searchGrade = gradeRepository.search(student, subject);
+        GradeEntity searchGrade = gradeRepository.findById_StudentAndId_Subject(student, subject);
 
         if(searchGrade != null){
-            searchGrade.setGrade(req.getGrade());
+            searchGrade.setGrade(gradeDto.getGrade());
             gradeRepository.save(searchGrade);
-            return searchGrade.getId();
+            return searchGrade.getStudent().getId() + "; " + searchGrade.getSubject().getId();
         }
 
         GradeEntity grade = new GradeEntity();
-        grade.setStudent(student);
-        grade.setSubject(subject);
-        grade.setGrade(req.getGrade());
+        grade.setGrade(gradeDto.getGrade());
+
+        GradeEntity.GradeId gradeId = new GradeEntity.GradeId();
+        gradeId.setStudent(student);
+        gradeId.setSubject(subject);
+        grade.setId(gradeId);
 
         gradeRepository.save(grade);
 
-        return grade.getId();
+        return grade.getStudent().getId() + "; " + grade.getSubject().getId();
     }
 
 }

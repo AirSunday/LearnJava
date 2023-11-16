@@ -8,8 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SubjectSaveReq {
-    @Schema(description = "subjects name")
+public class SubjectDto {
     @NotNull
     private String name;
 }

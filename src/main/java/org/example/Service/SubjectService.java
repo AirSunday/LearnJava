@@ -2,9 +2,8 @@ package org.example.Service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.Dto.SubjectSaveReq;
+import org.example.Dto.SubjectDto;
 import org.example.Entity.SubjectEntity;
-import org.example.Entity.SubjectType;
 import org.example.Repository.SubjectRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,14 +16,12 @@ import org.springframework.validation.annotation.Validated;
 public class SubjectService {
     private final SubjectRepository subjectRepository;
 
-    public Long save(@Valid SubjectSaveReq req) {
-
-        SubjectType subjectType = SubjectType.fromName(req.getName());
+    public Long save(@Valid SubjectDto subjectDto) {
 
         SubjectEntity subject = new SubjectEntity();
-        subject.setName(subjectType);
+        subject.setName(subjectDto.getName());
 
-        SubjectEntity subjectSearch = subjectRepository.search(subjectType);
+        SubjectEntity subjectSearch = subjectRepository.findByName(subjectDto.getName());
 
         if(subjectSearch == null) {
             subjectRepository.save(subject);
